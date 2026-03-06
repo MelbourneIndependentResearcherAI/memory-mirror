@@ -1,0 +1,77 @@
+.timeline {
+  padding: 0.5rem;
+}
+
+.timeline-group {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.5rem;
+}
+
+.marker-dot {
+  width: 1.25rem;
+  height: 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 3px var(--primary-light);
+  z-index: 1;
+}
+
+.marker-line {
+  flex: 1;
+  width: 2px;
+  background: linear-gradient(180deg, var(--primary-light) 0%, transparent 100%);
+  margin-top: 0.5rem;
+  min-height: 100px;
+}
+
+.timeline-group:last-child .marker-line {
+  display: none;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-month {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.timeline-memories {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .timeline-group {
+    gap: 1rem;
+  }
+
+  .timeline-month {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .marker-dot {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .timeline-memories {
+    gap: 1rem;
+  }
+}
