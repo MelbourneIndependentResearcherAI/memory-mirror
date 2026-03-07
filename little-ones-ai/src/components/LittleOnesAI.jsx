@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Star, Heart, Smile, Brain, Music, Palette, Activity, ChevronRight, Sparkles, Baby } from 'lucide-react';
 import '../styles/LittleOnesAI.css';
+import Pricing from './Pricing';
 
 const ACTIVITIES = [
   {
@@ -121,6 +122,7 @@ function ActivityCard({ activity }) {
 function LittleOnesAI() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [childAge, setChildAge] = useState('');
+  const [screen, setScreen] = useState('home');
 
   const categories = ['all', 'Math', 'Literacy', 'Language', 'Creative Arts', 'Science'];
 
@@ -140,95 +142,104 @@ function LittleOnesAI() {
             </div>
           </div>
           <nav className="header-nav">
-            <a href="#activities">Activities</a>
-            <a href="#milestones">Milestones</a>
-            <a href="#features">Features</a>
-            <button className="btn-primary nav-btn">Get Started Free</button>
+            <a href="#activities" onClick={(e) => { e.preventDefault(); setScreen('home'); }}>Activities</a>
+            <a href="#milestones" onClick={(e) => { e.preventDefault(); setScreen('home'); }}>Milestones</a>
+            <a href="#features" onClick={(e) => { e.preventDefault(); setScreen('home'); }}>Features</a>
+            <button className="btn-primary nav-btn" onClick={() => setScreen('pricing')}>Pricing</button>
+            <button className="btn-primary nav-btn" onClick={() => setScreen('home')}>Get Started Free</button>
           </nav>
         </div>
       </header>
 
-      <section className="hero">
-        <div className="hero-content">
-          <h2 className="hero-title">
-            Nurture Curiosity<br />
-            <span className="gradient-text">Every Day, Every Way</span>
-          </h2>
-          <p className="hero-subtitle">
-            Personalised learning activities for little ones aged 0–6 years.
-            Our AI crafts the perfect activities based on your child's age, interests, and development.
-          </p>
-          <div className="age-selector">
-            <label htmlFor="child-age">My child is</label>
-            <select
-              id="child-age"
-              className="age-select"
-              value={childAge}
-              onChange={(e) => setChildAge(e.target.value)}
-            >
-              <option value="">Select age</option>
-              <option value="0-1">0–1 year (Baby)</option>
-              <option value="1-2">1–2 years (Toddler)</option>
-              <option value="2-3">2–3 years (Toddler)</option>
-              <option value="3-4">3–4 years (Pre-schooler)</option>
-              <option value="4-5">4–5 years (Pre-schooler)</option>
-              <option value="5-6">5–6 years (Kindergarten)</option>
-            </select>
-            <button className="btn-primary">Find Activities</button>
-          </div>
-        </div>
-        <div className="hero-badges">
-          <span className="badge">🎓 Educator Approved</span>
-          <span className="badge">🔒 Privacy First</span>
-          <span className="badge">🌟 10,000+ Families</span>
-        </div>
-      </section>
-
-      <section id="features" className="features-section">
-        <div className="section-content">
-          <h2 className="section-title">Why Little Ones AI?</h2>
-          <div className="features-grid">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="feature-card">
-                <f.icon size={32} className="feature-icon" />
-                <h3>{f.title}</h3>
-                <p>{f.desc}</p>
+      {screen === 'pricing' ? (
+        <Pricing />
+      ) : (
+        <>
+          <section className="hero">
+            <div className="hero-content">
+              <h2 className="hero-title">
+                Nurture Curiosity<br />
+                <span className="gradient-text">Every Day, Every Way</span>
+              </h2>
+              <p className="hero-subtitle">
+                Personalised learning activities for little ones aged 0–6 years.
+                Our AI crafts the perfect activities based on your child's age, interests, and development.
+              </p>
+              <div className="age-selector">
+                <label htmlFor="child-age">My child is</label>
+                <select
+                  id="child-age"
+                  className="age-select"
+                  value={childAge}
+                  onChange={(e) => setChildAge(e.target.value)}
+                >
+                  <option value="">Select age</option>
+                  <option value="0-1">0–1 year (Baby)</option>
+                  <option value="1-2">1–2 years (Toddler)</option>
+                  <option value="2-3">2–3 years (Toddler)</option>
+                  <option value="3-4">3–4 years (Pre-schooler)</option>
+                  <option value="4-5">4–5 years (Pre-schooler)</option>
+                  <option value="5-6">5–6 years (Kindergarten)</option>
+                </select>
+                <button className="btn-primary">Find Activities</button>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+            <div className="hero-badges">
+              <span className="badge">🎓 Educator Approved</span>
+              <span className="badge">🔒 Privacy First</span>
+              <span className="badge">🌟 10,000+ Families</span>
+            </div>
+          </section>
 
-      <section id="activities" className="activities-section">
-        <div className="section-content">
-          <h2 className="section-title">Today's Activities</h2>
-          <div className="category-bar">
-            {categories.map((c) => (
-              <button
-                key={c}
-                className={`category-btn ${activeCategory === c ? 'active' : ''}`}
-                onClick={() => setActiveCategory(c)}
-              >
-                {c === 'all' ? 'All Activities' : c}
+          <section id="features" className="features-section">
+            <div className="section-content">
+              <h2 className="section-title">Why Little Ones AI?</h2>
+              <div className="features-grid">
+                {FEATURES.map((f) => (
+                  <div key={f.title} className="feature-card">
+                    <f.icon size={32} className="feature-icon" />
+                    <h3>{f.title}</h3>
+                    <p>{f.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="activities" className="activities-section">
+            <div className="section-content">
+              <h2 className="section-title">Today's Activities</h2>
+              <div className="category-bar">
+                {categories.map((c) => (
+                  <button
+                    key={c}
+                    className={`category-btn ${activeCategory === c ? 'active' : ''}`}
+                    onClick={() => setActiveCategory(c)}
+                  >
+                    {c === 'all' ? 'All Activities' : c}
+                  </button>
+                ))}
+              </div>
+              <div className="activities-grid">
+                {filtered.map((activity) => (
+                  <ActivityCard key={activity.id} activity={activity} />
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="cta-section">
+            <div className="cta-content">
+              <Smile size={48} className="cta-icon" />
+              <h2>Ready to spark your little one's curiosity?</h2>
+              <p>Join thousands of families already using Little Ones AI to support their child's growth.</p>
+              <button className="btn-primary btn-large" onClick={() => setScreen('pricing')}>
+                See Plans — Start Free
               </button>
-            ))}
-          </div>
-          <div className="activities-grid">
-            {filtered.map((activity) => (
-              <ActivityCard key={activity.id} activity={activity} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="cta-section">
-        <div className="cta-content">
-          <Smile size={48} className="cta-icon" />
-          <h2>Ready to spark your little one's curiosity?</h2>
-          <p>Join thousands of families already using Little Ones AI to support their child's growth.</p>
-          <button className="btn-primary btn-large">Start Free — No Credit Card Needed</button>
-        </div>
-      </section>
+            </div>
+          </section>
+        </>
+      )}
 
       <footer className="footer">
         <p>© 2024 Little Ones AI — Nurturing the next generation, one activity at a time</p>
