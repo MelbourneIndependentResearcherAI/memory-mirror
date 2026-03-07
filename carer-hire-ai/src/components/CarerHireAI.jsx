@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import Pricing from "./Pricing";
 
 const CARERS = [
   {
@@ -445,7 +446,7 @@ export default function CarerHireAI() {
         </button>
         <span style={{ color: "#81C784", fontSize: 11, background: "#2C5F2E22", padding: "3px 10px", borderRadius: 20, border: "1px solid #2C5F2E33", flexShrink: 0 }}>Your 24/7 Companion</span>
         <div style={{ marginLeft: "auto", display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {[["home","Home"],["browse","Meet Carers"]].map(([s, l]) => (
+          {[["home","Home"],["browse","Meet Carers"],["pricing","Pricing"]].map(([s, l]) => (
             <button key={s} onClick={() => setScreen(s)} style={{ background: screen === s ? "#2C5F2E" : "none", border: `1px solid ${screen === s ? "#2C5F2E" : "#2a2a4a"}`, color: "#fff", borderRadius: 10, padding: "7px 16px", cursor: "pointer", fontSize: 13, whiteSpace: "nowrap" }}>{l}</button>
           ))}
         </div>
@@ -471,6 +472,7 @@ export default function CarerHireAI() {
             </div>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", animation: "fadeUp 0.5s ease 0.25s both" }}>
               <button onClick={() => setScreen("browse")} style={{ background: "#2C5F2E", border: "none", borderRadius: 16, color: "#fff", padding: "16px 36px", fontSize: 16, cursor: "pointer", fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, boxShadow: "0 0 40px #2C5F2E55" }}>Meet the Carers →</button>
+              <button onClick={() => setScreen("pricing")} style={{ background: "none", border: "1px solid #2C5F2E", borderRadius: 16, color: "#81C784", padding: "16px 36px", fontSize: 16, cursor: "pointer", fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}>See Pricing</button>
             </div>
             <div style={{ display: "flex", gap: 18, marginTop: 60, flexWrap: "wrap", justifyContent: "center" }}>
               {CARERS.map((c, i) => (
@@ -522,6 +524,10 @@ export default function CarerHireAI() {
             ))}
           </div>
         </div>
+      )}
+
+      {screen === "pricing" && (
+        <Pricing />
       )}
 
       <div style={{ borderTop: "1px solid #1e1e35", padding: "28px 24px", textAlign: "center" }}>
