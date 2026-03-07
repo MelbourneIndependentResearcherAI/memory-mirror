@@ -260,11 +260,11 @@ function ChatInterface({ carer, onBack }) {
       `}</style>
 
       {/* Header */}
-      <div style={{ background: `linear-gradient(135deg, ${carer.color}, ${carer.color2})`, padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: "#fff", fontSize: 22, cursor: "pointer", padding: "4px 8px" }}>←</button>
-        <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#ffffff22", border: "2px solid #ffffff44", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>{carer.emoji}</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700 }}>{carer.name}</div>
+      <div style={{ background: `linear-gradient(135deg, ${carer.color}, ${carer.color2})`, padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, flexShrink: 0, flexWrap: "wrap" }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: "#fff", fontSize: 22, cursor: "pointer", padding: "4px 8px", flexShrink: 0 }}>←</button>
+        <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#ffffff22", border: "2px solid #ffffff44", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{carer.emoji}</div>
+        <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+          <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{carer.name}</div>
           <div style={{ color: "#ffffff77", fontSize: 12 }}>{carer.origin}</div>
         </div>
         <button onClick={toggleVoice} style={{
@@ -272,6 +272,7 @@ function ChatInterface({ carer, onBack }) {
           border: `2px solid ${voiceMode ? "#fff" : "#ffffff55"}`,
           borderRadius: 14, padding: "8px 16px", color: "#fff", cursor: "pointer",
           display: "flex", alignItems: "center", gap: 7, fontSize: 13, transition: "all 0.2s",
+          flexShrink: 0, whiteSpace: "nowrap",
         }}>
           <span style={{ fontSize: 16 }}>{voiceMode ? "🎙️" : "🔇"}</span>
           <span>{voiceMode ? "Hands-Free ON" : "Hands-Free"}</span>
@@ -437,15 +438,15 @@ export default function CarerHireAI() {
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
       `}</style>
 
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "#0d0d1acc", backdropFilter: "blur(20px)", borderBottom: "1px solid #2C5F2E33", padding: "0 24px", display: "flex", alignItems: "center", gap: 14, height: 64 }}>
-        <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "#0d0d1acc", backdropFilter: "blur(20px)", borderBottom: "1px solid #2C5F2E33", padding: "0 24px", display: "flex", alignItems: "center", gap: 14, minHeight: 64, flexWrap: "wrap" }}>
+        <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
           <span style={{ fontSize: 22 }}>🌿</span>
           <span style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 900 }}>Carer Hire AI</span>
         </button>
-        <span style={{ color: "#81C784", fontSize: 11, background: "#2C5F2E22", padding: "3px 10px", borderRadius: 20, border: "1px solid #2C5F2E33" }}>Your 24/7 Companion</span>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+        <span style={{ color: "#81C784", fontSize: 11, background: "#2C5F2E22", padding: "3px 10px", borderRadius: 20, border: "1px solid #2C5F2E33", flexShrink: 0 }}>Your 24/7 Companion</span>
+        <div style={{ marginLeft: "auto", display: "flex", gap: 8, flexWrap: "wrap" }}>
           {[["home","Home"],["browse","Meet Carers"]].map(([s, l]) => (
-            <button key={s} onClick={() => setScreen(s)} style={{ background: screen === s ? "#2C5F2E" : "none", border: `1px solid ${screen === s ? "#2C5F2E" : "#2a2a4a"}`, color: "#fff", borderRadius: 10, padding: "7px 16px", cursor: "pointer", fontSize: 13 }}>{l}</button>
+            <button key={s} onClick={() => setScreen(s)} style={{ background: screen === s ? "#2C5F2E" : "none", border: `1px solid ${screen === s ? "#2C5F2E" : "#2a2a4a"}`, color: "#fff", borderRadius: 10, padding: "7px 16px", cursor: "pointer", fontSize: 13, whiteSpace: "nowrap" }}>{l}</button>
           ))}
         </div>
       </nav>
