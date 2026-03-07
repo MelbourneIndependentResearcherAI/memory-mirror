@@ -249,6 +249,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .activity-icon { font-size: 2rem; }
@@ -371,4 +372,6 @@ body {
   .header-nav a { display: none; }
   .activities-grid { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr; }
+  .header-content { flex-wrap: wrap; gap: 0.75rem; }
+  .nav-btn { width: 100%; text-align: center; }
 }
