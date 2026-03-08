@@ -1,0 +1,141 @@
+/* ── FreeTrial modal ─────────────────────────────────────────────── */
+
+.free-trial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.free-trial-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-width: 440px;
+  width: 100%;
+  padding: 2rem;
+  position: relative;
+}
+
+.free-trial-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.free-trial-close:hover {
+  color: var(--text);
+}
+
+.free-trial-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.free-trial-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+}
+
+.free-trial-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.free-trial-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 0.25rem;
+}
+
+.free-trial-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.free-trial-input:focus {
+  border-color: var(--primary);
+}
+
+.free-trial-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.free-trial-submit {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.free-trial-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Success state */
+.free-trial-success {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.free-trial-success-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--success, #22c55e);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto 1.25rem;
+}
+
+.free-trial-success h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+
+.free-trial-success p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.free-trial-success .btn-primary {
+  margin-top: 1rem;
+  min-width: 140px;
+}

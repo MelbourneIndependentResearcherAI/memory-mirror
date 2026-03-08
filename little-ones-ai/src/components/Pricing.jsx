@@ -1,23 +1,22 @@
 import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 import '../styles/Pricing.css';
+import FreeTrial from './FreeTrial';
 import ManualPayment from './ManualPayment';
 
 const PLANS = [
   {
     id: 'free_trial',
-    name: 'Free Trial',
+    name: '7-Day Free Trial',
     price: null,
     priceLabel: 'Free',
     period: '',
-    description: 'Try Little Ones AI with no commitment. Explore personalised activities for your grandchild.',
+    description: 'Try Little Ones AI with no commitment. Full access to all features for 7 days.',
     features: [
       '7-day free access',
       'AI-personalised activities',
       'All age groups (0–6 years)',
       'No credit card required',
     ],
-    cta: 'Start Free Trial',
     highlight: false,
     recommended: false,
   },
@@ -35,7 +34,6 @@ const PLANS = [
       'Weekly activity packs',
       'Cancel anytime',
     ],
-    cta: 'Get Started',
     highlight: false,
     recommended: false,
   },
@@ -53,7 +51,6 @@ const PLANS = [
       'Family activity calendar',
       'Cancel anytime',
     ],
-    cta: 'Choose Full Family',
     highlight: true,
     recommended: true,
     badge: 'Best Value',
@@ -73,62 +70,14 @@ const PLANS = [
       'Early access to new features',
       'Cancel anytime',
     ],
-    cta: 'Get the Bundle',
     highlight: false,
     recommended: false,
   },
 ];
 
 export default function Pricing() {
-  const [loading, setLoading] = useState(null);
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [manualPlan, setManualPlan] = useState(null);
-
-  async function handleSelect(plan) {
-    setError('');
-
-    if (plan.id === 'free_trial') {
-      alert('Welcome! Your free trial is ready. Explore the activities and start your child\'s learning journey.');
-      return;
-    }
-
-    if (!email.trim()) {
-      setError('Please enter your email address to continue.');
-      return;
-    }
-
-    setLoading(plan.id);
-
-    try {
-      const origin = window.location.origin;
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          planId: plan.id,
-          email: email.trim(),
-          successUrl: `${origin}/?payment=success&plan=${plan.id}`,
-          cancelUrl: `${origin}/?payment=cancelled`,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error ?? 'Something went wrong. Please try again.');
-        return;
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (err) {
-      setError('Unable to connect. Please check your internet connection and try again.');
-    } finally {
-      setLoading(null);
-    }
-  }
+  const [showTrial, setShowTrial] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   return (
     <section className="pricing-section">
@@ -137,17 +86,6 @@ export default function Pricing() {
         <p className="pricing-subtitle">
           Support your little one's development every day, for less than a cup of coffee a week.
         </p>
-
-        <div className="pricing-email-row">
-          <input
-            type="email"
-            className="pricing-email-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Your email address"
-          />
-        </div>
-        {error && <p className="pricing-error">{error}</p>}
       </div>
 
       <div className="pricing-grid">
@@ -178,20 +116,19 @@ export default function Pricing() {
               ))}
             </ul>
 
-            <button
-              className={`btn-primary pricing-cta ${plan.highlight ? 'pricing-cta--highlight' : ''}`}
-              onClick={() => handleSelect(plan)}
-              disabled={loading === plan.id}
-            >
-              {loading === plan.id ? 'Redirecting…' : plan.cta}
-            </button>
-
-            {plan.price !== null && (
+            {plan.price === null ? (
               <button
-                className="pricing-manual-btn"
-                onClick={() => setManualPlan(plan)}
+                className="btn-primary pricing-cta"
+                onClick={() => setShowTrial(true)}
               >
-                Pay by Bank Transfer
+                Start 7-Day Free Trial
+              </button>
+            ) : (
+              <button
+                className={`btn-primary pricing-cta ${plan.highlight ? 'pricing-cta--highlight' : ''}`}
+                onClick={() => setSelectedPlan(plan)}
+              >
+                Contact to Subscribe
               </button>
             )}
           </div>
@@ -199,11 +136,15 @@ export default function Pricing() {
       </div>
 
       <p className="pricing-footer-note">
-        🔒 Secure payments via Stripe &nbsp;•&nbsp; Cancel anytime &nbsp;•&nbsp; AUD pricing
+        ✉️ Contact us to subscribe &nbsp;•&nbsp; Cancel anytime &nbsp;•&nbsp; AUD pricing
       </p>
 
-      {manualPlan && (
-        <ManualPayment plan={manualPlan} onClose={() => setManualPlan(null)} />
+      {showTrial && (
+        <FreeTrial onClose={() => setShowTrial(false)} />
+      )}
+
+      {selectedPlan && (
+        <ManualPayment plan={selectedPlan} onClose={() => setSelectedPlan(null)} />
       )}
     </section>
   );

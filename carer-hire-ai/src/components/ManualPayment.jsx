@@ -1,11 +1,7 @@
 import { useState } from 'react';
 
-const BANK_DETAILS = {
-  bsb: '633-123',
-  account: '116572719',
-  payId: 'mickiimac@up.me',
-  accountName: 'Carer Hire AI',
-};
+const PAYID = 'mickiimac@up.me';
+const CONTACT_EMAIL = 'mcnamaram86@gmail.com';
 
 const MODAL_STYLES = {
   overlay: {
@@ -22,82 +18,39 @@ const MODAL_STYLES = {
     background: '#1a1a2e',
     border: '1px solid #2a2a4a',
     borderRadius: 20,
-    maxWidth: 520,
+    maxWidth: 480,
     width: '100%',
-    maxHeight: '90vh',
-    overflowY: 'auto',
     padding: '2rem',
     position: 'relative',
     color: '#fff',
   },
 };
 
+function buildMailtoLink(plan) {
+  const subject = encodeURIComponent(
+    `Carer Hire AI — Subscribe to ${plan.name} (${plan.priceLabel}${plan.period ? ' ' + plan.period : ''})`
+  );
+  const body = encodeURIComponent(
+    `Hi,\n\nI'd like to subscribe to the ${plan.name} plan at ${plan.priceLabel}${plan.period ? ' ' + plan.period : ''}.\n\nI'll be making payment via PayID to ${PAYID}.\n\nPlease activate my subscription once payment is received.\n\nThanks`
+  );
+  return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+}
+
 export default function ManualPayment({ plan, onClose }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const reference = plan
-    ? `CHA-${plan.id.toUpperCase()}-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`
-    : '';
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError('');
-
-    if (!name.trim() || !email.trim()) {
-      setError('Please enter your name and email address.');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch('/api/manual-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          app: 'carer-hire-ai',
-          planId: plan.id,
-          planName: plan.name,
-          amount: plan.price,
-          name: name.trim(),
-          email: email.trim(),
-          reference,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? 'Something went wrong. Please try again.');
-        return;
-      }
-
-      setSubmitted(true);
-    } catch {
-      setError('Unable to connect. Please check your internet connection and try again.');
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [copied, setCopied] = useState(false);
 
   if (!plan) return null;
 
   const accent = plan.accent ?? '#81C784';
 
-  const inputStyle = {
-    width: '100%',
-    padding: '10px 14px',
-    background: '#12122a',
-    border: '1px solid #2a2a4a',
-    borderRadius: 10,
-    color: '#fff',
-    fontSize: 14,
-    outline: 'none',
-    boxSizing: 'border-box',
-    marginBottom: 4,
-  };
+  function handleCopy() {
+    navigator.clipboard.writeText(PAYID).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      setCopied(false);
+    });
+  }
 
   return (
     <div
@@ -105,7 +58,7 @@ export default function ManualPayment({ plan, onClose }) {
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={MODAL_STYLES.modal} role="dialog" aria-modal="true">
-        {/* Close button */}
+        {/* Close */}
         <button
           onClick={onClose}
           aria-label="Close"
@@ -118,149 +71,83 @@ export default function ManualPayment({ plan, onClose }) {
           ✕
         </button>
 
-        {submitted ? (
-          <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-            <div style={{
-              width: 56, height: 56, borderRadius: '50%',
-              background: accent, color: '#0d1a0d',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 24, fontWeight: 700, margin: '0 auto 20px',
-            }}>
-              ✓
-            </div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, marginBottom: 12 }}>
-              Payment details received!
-            </h2>
-            <p style={{ color: '#aaa', fontSize: 14, lineHeight: 1.6, marginBottom: 8 }}>
-              Thanks, <strong style={{ color: '#fff' }}>{name}</strong>. We'll activate your{' '}
-              <strong style={{ color: accent }}>{plan.name}</strong> plan once your bank transfer arrives.
-            </p>
-            <p style={{ color: '#aaa', fontSize: 13, lineHeight: 1.6 }}>
-              Your reference: <code style={{ background: '#2a2a4a', padding: '2px 6px', borderRadius: 4, fontFamily: 'monospace' }}>{reference}</code>
-            </p>
+        <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, marginBottom: 6 }}>
+          How to Subscribe
+        </h2>
+        <p style={{ color: '#aaa', fontSize: 13, lineHeight: 1.55, marginBottom: 20 }}>
+          Pay via PayID below, then email us with your chosen plan and we'll activate your subscription within 24 hours.
+        </p>
+
+        {/* Plan summary */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          background: '#12122a', border: `1px solid ${accent}`,
+          borderRadius: 12, padding: '12px 16px', marginBottom: 20,
+        }}>
+          <span style={{ fontWeight: 600, fontSize: 15 }}>{plan.name}</span>
+          <span style={{ color: accent, fontWeight: 800, fontSize: 20 }}>
+            {plan.priceLabel}{plan.period ? ` ${plan.period}` : ''}
+          </span>
+        </div>
+
+        {/* PayID */}
+        <div style={{
+          background: '#12122a', border: '1px solid #2a2a4a',
+          borderRadius: 12, padding: '16px 18px', marginBottom: 20,
+        }}>
+          <p style={{ fontSize: 12, color: '#888', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8, fontWeight: 700 }}>
+            Pay via PayID
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+            <span style={{ fontSize: 18, fontWeight: 700, color: '#fff', letterSpacing: '0.02em' }}>{PAYID}</span>
             <button
-              onClick={onClose}
+              onClick={handleCopy}
               style={{
-                marginTop: 20, padding: '11px 32px',
-                background: accent, color: '#0d1a0d',
-                border: 'none', borderRadius: 12,
-                fontWeight: 700, cursor: 'pointer', fontSize: 14,
-                fontFamily: "'Playfair Display', Georgia, serif",
+                padding: '6px 14px',
+                background: copied ? accent : 'transparent',
+                border: `1px solid ${copied ? accent : '#2a2a4a'}`,
+                borderRadius: 8,
+                color: copied ? '#0d1a0d' : '#888',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
-              Done
+              {copied ? '✓ Copied' : 'Copy'}
             </button>
           </div>
-        ) : (
-          <>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, marginBottom: 6 }}>
-              Pay by Bank Transfer
-            </h2>
-            <p style={{ color: '#aaa', fontSize: 13, lineHeight: 1.55, marginBottom: 20 }}>
-              Transfer the amount for your selected plan to the account below, then complete the
-              form so we can activate your subscription.
-            </p>
+        </div>
 
-            {/* Plan summary */}
-            <div style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              background: '#12122a', border: `1px solid ${accent}`,
-              borderRadius: 12, padding: '12px 16px', marginBottom: 20,
-            }}>
-              <span style={{ fontWeight: 600, fontSize: 15 }}>{plan.name}</span>
-              <span style={{ color: accent, fontWeight: 800, fontSize: 18 }}>
-                {plan.priceLabel}{plan.period ? ` ${plan.period}` : ''}
-              </span>
-            </div>
+        {/* Email button */}
+        <a
+          href={buildMailtoLink(plan)}
+          style={{
+            display: 'block',
+            width: '100%',
+            padding: '13px',
+            borderRadius: 12,
+            background: accent,
+            color: '#0d1a0d',
+            fontSize: 14,
+            fontWeight: 700,
+            textDecoration: 'none',
+            textAlign: 'center',
+            boxSizing: 'border-box',
+            fontFamily: "'Playfair Display', Georgia, serif",
+            transition: 'opacity 0.2s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+        >
+          ✉️ Email Us to Subscribe
+        </a>
 
-            {/* Bank details */}
-            <div style={{
-              background: '#12122a', border: '1px solid #2a2a4a',
-              borderRadius: 12, padding: '16px 18px', marginBottom: 20,
-            }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: '#fff' }}>
-                Bank Transfer Details
-              </h3>
-              {[
-                ['Account Name', BANK_DETAILS.accountName],
-                ['BSB', BANK_DETAILS.bsb],
-                ['Account Number', BANK_DETAILS.account],
-                ['PayID', BANK_DETAILS.payId],
-                ['Reference', reference],
-              ].map(([label, value], i, arr) => (
-                <div
-                  key={label}
-                  style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '8px 0',
-                    borderBottom: i < arr.length - 1 ? '1px solid #2a2a4a' : 'none',
-                    fontSize: 13,
-                  }}
-                >
-                  <span style={{ color: '#888' }}>{label}</span>
-                  <span style={{
-                    fontWeight: 600, color: '#fff',
-                    fontFamily: label === 'Reference' ? 'monospace' : 'inherit',
-                    background: label === 'Reference' ? '#2a2a4a' : 'none',
-                    padding: label === 'Reference' ? '2px 6px' : 0,
-                    borderRadius: label === 'Reference' ? 4 : 0,
-                    fontSize: label === 'Reference' ? 12 : 13,
-                  }}>
-                    {value}
-                  </span>
-                </div>
-              ))}
-              <p style={{ color: '#888', fontSize: 12, marginTop: 10, lineHeight: 1.5 }}>
-                ⚠️ Please include the reference above so we can match your payment.
-              </p>
-            </div>
-
-            {/* Confirmation form */}
-            <form onSubmit={handleSubmit}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Confirm your details</h3>
-              <label style={{ fontSize: 13, color: '#aaa', display: 'block', marginBottom: 4 }} htmlFor="mp-cha-name">
-                Full name
-              </label>
-              <input
-                id="mp-cha-name"
-                type="text"
-                style={inputStyle}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your full name"
-                autoComplete="name"
-              />
-              <label style={{ fontSize: 13, color: '#aaa', display: 'block', marginTop: 10, marginBottom: 4 }} htmlFor="mp-cha-email">
-                Email address
-              </label>
-              <input
-                id="mp-cha-email"
-                type="email"
-                style={inputStyle}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                autoComplete="email"
-              />
-              {error && <p style={{ color: '#ef4444', fontSize: 13, margin: '8px 0' }}>{error}</p>}
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  width: '100%', marginTop: 14, padding: '13px',
-                  background: accent, color: '#0d1a0d',
-                  border: 'none', borderRadius: 12,
-                  fontWeight: 700, fontSize: 14, cursor: loading ? 'wait' : 'pointer',
-                  opacity: loading ? 0.6 : 1,
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  transition: 'opacity 0.2s',
-                }}
-              >
-                {loading ? 'Submitting…' : "I've sent the transfer"}
-              </button>
-            </form>
-          </>
-        )}
+        <p style={{ color: '#555', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
+          {CONTACT_EMAIL}
+        </p>
       </div>
     </div>
   );
