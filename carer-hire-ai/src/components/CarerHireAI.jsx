@@ -131,18 +131,32 @@ CRITICAL CONVERSATION RULES:
   },
 ];
 
+// speak() — handles async voice loading on Chrome (getVoices() is empty until voiceschanged fires).
 function speak(text, onEnd) {
   if (!window.speechSynthesis) { onEnd?.(); return; }
   window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(text);
   utt.rate = 0.9; utt.pitch = 1.05; utt.volume = 1;
-  const voices = window.speechSynthesis.getVoices();
-  const pick = voices.find(v => /samantha|karen|moira|fiona|victoria/i.test(v.name))
-    || voices.find(v => v.lang.startsWith("en"))
-    || voices[0];
-  if (pick) utt.voice = pick;
   utt.onend = () => onEnd?.();
-  window.speechSynthesis.speak(utt);
+
+  const doSpeak = () => {
+    const voices = window.speechSynthesis.getVoices();
+    const pick = voices.find(v => /samantha|karen|moira|fiona|victoria/i.test(v.name))
+      || voices.find(v => v.lang.startsWith("en"))
+      || voices[0];
+    if (pick) utt.voice = pick;
+    window.speechSynthesis.speak(utt);
+  };
+
+  // Chrome loads voices asynchronously — wait for them if not yet available.
+  if (window.speechSynthesis.getVoices().length > 0) {
+    doSpeak();
+  } else {
+    window.speechSynthesis.addEventListener("voiceschanged", function onVoices() {
+      window.speechSynthesis.removeEventListener("voiceschanged", onVoices);
+      doSpeak();
+    });
+  }
 }
 
 // Delay (ms) between the AI finishing speaking and the mic restarting in hands-free mode.
@@ -159,9 +173,16 @@ function ChatInterface({ carer, onBack }) {
   const [liveTranscript, setLiveTranscript] = useState("");
   const bottomRef = useRef(null);
   const recRef = useRef(null);
+  // Refs mirror state values so that memoised callbacks always read current values.
   const voiceRef = useRef(false);
+  const aiSpeakingRef = useRef(false);
+  const loadingRef = useRef(false);
+  // Always points to the latest sendMessage — avoids stale closure in startListening.
+  const sendMessageRef = useRef(null);
 
   useEffect(() => { voiceRef.current = voiceMode; }, [voiceMode]);
+  useEffect(() => { aiSpeakingRef.current = aiSpeaking; }, [aiSpeaking]);
+  useEffect(() => { loadingRef.current = loading; }, [loading]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   const startListening = useCallback(() => {
@@ -179,11 +200,18 @@ function ChatInterface({ carer, onBack }) {
       if (e.results[e.results.length - 1].isFinal) {
         setLiveTranscript("");
         setListening(false);
-        sendMessage(t);
+        // Use ref so we always call the latest sendMessage with up-to-date state.
+        sendMessageRef.current?.(t);
       }
     };
     rec.onerror = () => { setListening(false); setLiveTranscript(""); };
-    rec.onend = () => { setListening(false); };
+    // If recognition ends without a final result (e.g. silence timeout), restart in hands-free mode.
+    rec.onend = () => {
+      setListening(false);
+      if (voiceRef.current && !aiSpeakingRef.current && !loadingRef.current) {
+        setTimeout(() => startListening(), VOICE_RESTART_DELAY_MS);
+      }
+    };
     recRef.current = rec;
     try { rec.start(); } catch (err) { console.warn("Speech recognition start failed:", err); }
   }, []);
@@ -200,23 +228,20 @@ function ChatInterface({ carer, onBack }) {
     setLoading(true);
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      // API key is kept server-side — call our proxy instead of Anthropic directly.
+      const res = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY || "",
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-allow-browser": "true",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: carer.systemPrompt,
+          systemPrompt: carer.systemPrompt,
           messages: newHistory.map(m => ({ role: m.role, content: m.text })),
         }),
       });
       const data = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text || "I'm right here with you.";
+      if (!res.ok) {
+        console.error("Carer API error:", data?.error);
+      }
+      const reply = data.text || "I'm right here with you.";
       setMessages(h => [...h, { role: "assistant", text: reply }]);
       setLoading(false);
       if (voiceRef.current) {
@@ -234,6 +259,9 @@ function ChatInterface({ carer, onBack }) {
       if (voiceRef.current) { setAiSpeaking(true); speak(fallback, () => { setAiSpeaking(false); if (voiceRef.current) startListening(); }); }
     }
   };
+
+  // Keep the ref pointing to the latest sendMessage on every render.
+  sendMessageRef.current = sendMessage;
 
   const toggleVoice = () => {
     if (voiceMode) {

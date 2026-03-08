@@ -19,6 +19,11 @@ export const storage = {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(memories));
       return true;
     } catch (error) {
+      // Handle QuotaExceededError — localStorage is full (common when storing large base64 images).
+      if (error && (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
+        console.error('localStorage quota exceeded. Consider removing old memories or images.');
+        throw new Error('Storage is full. Please delete some memories or remove photo attachments to free up space.');
+      }
       console.error('Error saving memories:', error);
       return false;
     }

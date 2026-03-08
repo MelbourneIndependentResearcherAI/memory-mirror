@@ -122,13 +122,35 @@ function ActivityCard({ activity }) {
 function LittleOnesAI() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [childAge, setChildAge] = useState('');
+  const [appliedAge, setAppliedAge] = useState('');
   const [screen, setScreen] = useState('home');
 
   const categories = ['all', 'Math', 'Literacy', 'Language', 'Creative Arts', 'Science'];
 
+  /**
+   * Parse an age-range string such as "2-4 years" or "0-1" into { min, max }.
+   * Handles both activity ranges ("2-4 years") and childAge option values ("2-3").
+   */
+  function parseAgeRange(rangeStr) {
+    const match = String(rangeStr).match(/(\d+)[–\-](\d+)/);
+    if (!match) return { min: 0, max: 6 };
+    return { min: parseInt(match[1], 10), max: parseInt(match[2], 10) };
+  }
+
   const filtered = ACTIVITIES.filter((a) => {
-    return activeCategory === 'all' || a.category === activeCategory;
+    const categoryMatch = activeCategory === 'all' || a.category === activeCategory;
+    if (!categoryMatch) return false;
+    if (!appliedAge) return true;
+    const childRange = parseAgeRange(appliedAge);
+    const activityRange = parseAgeRange(a.ageRange);
+    // Activity is suitable if its age range overlaps with the child's age range.
+    return activityRange.min <= childRange.max && activityRange.max >= childRange.min;
   });
+
+  function handleFindActivities() {
+    setAppliedAge(childAge);
+    document.getElementById('activities')?.scrollIntoView({ behavior: 'smooth' });
+  }
 
   return (
     <div className="app">
@@ -181,7 +203,7 @@ function LittleOnesAI() {
                   <option value="4-5">4–5 years (Pre-schooler)</option>
                   <option value="5-6">5–6 years (Kindergarten)</option>
                 </select>
-                <button className="btn-primary">Find Activities</button>
+                <button className="btn-primary" onClick={handleFindActivities}>Find Activities</button>
               </div>
             </div>
             <div className="hero-badges">
@@ -208,7 +230,20 @@ function LittleOnesAI() {
 
           <section id="activities" className="activities-section">
             <div className="section-content">
-              <h2 className="section-title">Today's Activities</h2>
+              <h2 className="section-title">
+                {appliedAge ? `Activities for Ages ${appliedAge.replace('-', '–')}` : "Today's Activities"}
+              </h2>
+              {appliedAge && (
+                <div className="category-bar" style={{ marginBottom: '0.5rem' }}>
+                  <button
+                    className="category-btn active"
+                    onClick={() => { setAppliedAge(''); setChildAge(''); }}
+                    aria-label="Clear age filter"
+                  >
+                    ✕ Clear age filter
+                  </button>
+                </div>
+              )}
               <div className="category-bar">
                 {categories.map((c) => (
                   <button
@@ -221,9 +256,15 @@ function LittleOnesAI() {
                 ))}
               </div>
               <div className="activities-grid">
-                {filtered.map((activity) => (
-                  <ActivityCard key={activity.id} activity={activity} />
-                ))}
+                {filtered.length > 0 ? (
+                  filtered.map((activity) => (
+                    <ActivityCard key={activity.id} activity={activity} />
+                  ))
+                ) : (
+                  <p style={{ color: 'var(--text-muted)', gridColumn: '1 / -1', textAlign: 'center', padding: '2rem 0' }}>
+                    No activities found for this age and category. Try a different category or age.
+                  </p>
+                )}
               </div>
             </div>
           </section>

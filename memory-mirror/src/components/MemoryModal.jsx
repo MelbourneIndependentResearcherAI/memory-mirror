@@ -38,6 +38,13 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Limit to 5 MB to avoid filling localStorage (base64 adds ~33% overhead).
+      const MAX_SIZE_BYTES = 5 * 1024 * 1024;
+      if (file.size > MAX_SIZE_BYTES) {
+        alert('Image is too large. Please choose an image under 5 MB.');
+        e.target.value = '';
+        return;
+      }
       try {
         const base64 = await imageToBase64(file);
         setFormData(prev => ({ ...prev, image: base64 }));
@@ -50,12 +57,16 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
   };
 
   const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+    const trimmed = tagInput.trim();
+    // Limit tag length to prevent oversized stored values.
+    if (trimmed && trimmed.length <= 50 && !formData.tags.includes(trimmed)) {
       setFormData(prev => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...prev.tags, trimmed]
       }));
       setTagInput('');
+    } else if (trimmed.length > 50) {
+      alert('Tag must be 50 characters or fewer.');
     }
   };
 

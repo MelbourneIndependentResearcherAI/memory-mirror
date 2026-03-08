@@ -62,6 +62,21 @@ const PLANS = {
   },
 };
 
+/**
+ * Validates that a URL is a safe redirect target.
+ * Only allows HTTPS URLs (required by Stripe) to prevent open-redirect abuse.
+ * Allows localhost for development environments.
+ */
+function isSafeUrl(url) {
+  if (typeof url !== 'string') return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' || parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+  } catch {
+    return false;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -71,6 +86,10 @@ export default async function handler(req, res) {
 
   if (!planId || !successUrl || !cancelUrl) {
     return res.status(400).json({ error: 'planId, successUrl, and cancelUrl are required.' });
+  }
+
+  if (!isSafeUrl(successUrl) || !isSafeUrl(cancelUrl)) {
+    return res.status(400).json({ error: 'successUrl and cancelUrl must be valid HTTPS URLs.' });
   }
 
   if (planId === 'free_trial') {
