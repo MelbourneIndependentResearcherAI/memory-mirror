@@ -1,0 +1,236 @@
+/* ── ManualPayment modal ─────────────────────────────────────────── */
+
+.manual-payment-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.manual-payment-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-width: 520px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  position: relative;
+}
+
+.manual-payment-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.manual-payment-close:hover {
+  color: var(--text);
+}
+
+.manual-payment-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.manual-payment-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+}
+
+/* Plan summary */
+.manual-payment-plan-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--primary-light, #eff6ff);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.manual-payment-plan-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.manual-payment-plan-price {
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+/* Bank details */
+.manual-payment-bank {
+  background: var(--bg, #f8fafc);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.manual-payment-bank-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+  color: var(--text);
+}
+
+.manual-payment-bank-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.manual-payment-bank-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.manual-payment-bank-row:last-child {
+  border-bottom: none;
+}
+
+.manual-payment-bank-label {
+  color: var(--text-muted);
+}
+
+.manual-payment-bank-value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.manual-payment-ref {
+  font-family: monospace;
+  font-size: 0.85rem;
+  background: var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.manual-payment-bank-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Confirmation form */
+.manual-payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.manual-payment-form-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.manual-payment-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 0.25rem;
+}
+
+.manual-payment-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.manual-payment-input:focus {
+  border-color: var(--primary);
+}
+
+.manual-payment-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.manual-payment-submit {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+/* Success state */
+.manual-payment-success {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.manual-payment-success-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--success, #22c55e);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto 1.25rem;
+}
+
+.manual-payment-success h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+
+.manual-payment-success p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.manual-payment-ref-note code {
+  background: var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: monospace;
+}
+
+.manual-payment-success .btn-primary {
+  margin-top: 1rem;
+  min-width: 120px;
+}

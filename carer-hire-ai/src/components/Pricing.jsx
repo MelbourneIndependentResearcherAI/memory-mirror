@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ManualPayment from './ManualPayment';
 
 const PLANS = [
   {
@@ -83,6 +84,7 @@ export default function Pricing() {
   const [loading, setLoading] = useState(null);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [manualPlan, setManualPlan] = useState(null);
 
   async function handleSelect(plan) {
     setError('');
@@ -257,6 +259,30 @@ export default function Pricing() {
             >
               {loading === plan.id ? 'Redirecting…' : plan.cta}
             </button>
+
+            {plan.price !== null && (
+              <button
+                onClick={() => setManualPlan(plan)}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  marginTop: 8,
+                  padding: '9px',
+                  background: 'none',
+                  border: '1px solid #2a2a4a',
+                  borderRadius: 12,
+                  color: '#888',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  transition: 'border-color 0.2s, color 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = plan.accent; e.currentTarget.style.color = plan.accent; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#2a2a4a'; e.currentTarget.style.color = '#888'; }}
+              >
+                Pay by Bank Transfer
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -264,6 +290,10 @@ export default function Pricing() {
       <div style={{ textAlign: 'center', marginTop: 48, color: '#555', fontSize: 13 }}>
         <p>🔒 Secure payments via Stripe &nbsp;•&nbsp; Cancel anytime &nbsp;•&nbsp; AUD pricing</p>
       </div>
+
+      {manualPlan && (
+        <ManualPayment plan={manualPlan} onClose={() => setManualPlan(null)} />
+      )}
     </div>
   );
 }

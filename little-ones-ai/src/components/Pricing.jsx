@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import '../styles/Pricing.css';
+import ManualPayment from './ManualPayment';
 
 const PLANS = [
   {
@@ -82,6 +83,7 @@ export default function Pricing() {
   const [loading, setLoading] = useState(null);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [manualPlan, setManualPlan] = useState(null);
 
   async function handleSelect(plan) {
     setError('');
@@ -183,6 +185,15 @@ export default function Pricing() {
             >
               {loading === plan.id ? 'Redirecting…' : plan.cta}
             </button>
+
+            {plan.price !== null && (
+              <button
+                className="pricing-manual-btn"
+                onClick={() => setManualPlan(plan)}
+              >
+                Pay by Bank Transfer
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -190,6 +201,10 @@ export default function Pricing() {
       <p className="pricing-footer-note">
         🔒 Secure payments via Stripe &nbsp;•&nbsp; Cancel anytime &nbsp;•&nbsp; AUD pricing
       </p>
+
+      {manualPlan && (
+        <ManualPayment plan={manualPlan} onClose={() => setManualPlan(null)} />
+      )}
     </section>
   );
 }
