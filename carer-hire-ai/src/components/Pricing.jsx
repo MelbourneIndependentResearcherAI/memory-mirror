@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import FreeTrial from './FreeTrial';
+import ManualPayment from './ManualPayment';
 
 const PLANS = [
   {
@@ -76,15 +77,9 @@ const PLANS = [
   },
 ];
 
-function buildMailtoLink(plan) {
-  const subject = encodeURIComponent(
-    `Carer Hire AI — Subscribe to ${plan.name} (${plan.priceLabel}${plan.period ? ' ' + plan.period : ''})`
-  );
-  return `mailto:michael@memory-mirror.app?subject=${subject}`;
-}
-
 export default function Pricing() {
   const [showTrial, setShowTrial] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   return (
     <div style={{ padding: '60px 24px', maxWidth: 1100, margin: '0 auto' }}>
@@ -189,10 +184,9 @@ export default function Pricing() {
                 Start 7-Day Free Trial
               </button>
             ) : (
-              <a
-                href={buildMailtoLink(plan)}
+              <button
+                onClick={() => setSelectedPlan(plan)}
                 style={{
-                  display: 'block',
                   width: '100%',
                   padding: '13px',
                   borderRadius: 12,
@@ -203,14 +197,11 @@ export default function Pricing() {
                   fontWeight: 700,
                   cursor: 'pointer',
                   fontFamily: "'Playfair Display', Georgia, serif",
-                  textDecoration: 'none',
-                  textAlign: 'center',
-                  boxSizing: 'border-box',
                   transition: 'all 0.2s',
                 }}
               >
                 Contact to Subscribe
-              </a>
+              </button>
             )}
           </div>
         ))}
@@ -222,6 +213,10 @@ export default function Pricing() {
 
       {showTrial && (
         <FreeTrial onClose={() => setShowTrial(false)} />
+      )}
+
+      {selectedPlan && (
+        <ManualPayment plan={selectedPlan} onClose={() => setSelectedPlan(null)} />
       )}
     </div>
   );

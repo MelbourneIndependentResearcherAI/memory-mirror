@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import '../styles/Pricing.css';
 import FreeTrial from './FreeTrial';
+import ManualPayment from './ManualPayment';
 
 const PLANS = [
   {
@@ -74,15 +75,9 @@ const PLANS = [
   },
 ];
 
-function buildMailtoLink(plan) {
-  const subject = encodeURIComponent(
-    `Little Ones AI — Subscribe to ${plan.name} (${plan.priceLabel}${plan.period ? ' ' + plan.period : ''})`
-  );
-  return `mailto:michael@memory-mirror.app?subject=${subject}`;
-}
-
 export default function Pricing() {
   const [showTrial, setShowTrial] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   return (
     <section className="pricing-section">
@@ -129,12 +124,12 @@ export default function Pricing() {
                 Start 7-Day Free Trial
               </button>
             ) : (
-              <a
-                href={buildMailtoLink(plan)}
+              <button
                 className={`btn-primary pricing-cta ${plan.highlight ? 'pricing-cta--highlight' : ''}`}
+                onClick={() => setSelectedPlan(plan)}
               >
                 Contact to Subscribe
-              </a>
+              </button>
             )}
           </div>
         ))}
@@ -146,6 +141,10 @@ export default function Pricing() {
 
       {showTrial && (
         <FreeTrial onClose={() => setShowTrial(false)} />
+      )}
+
+      {selectedPlan && (
+        <ManualPayment plan={selectedPlan} onClose={() => setSelectedPlan(null)} />
       )}
     </section>
   );
