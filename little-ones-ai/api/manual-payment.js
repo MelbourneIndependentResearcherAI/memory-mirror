@@ -23,6 +23,13 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
+/** Authoritative plan amounts (AUD) — validated server-side. */
+const PLAN_AMOUNTS = {
+  one_grandchild: 14.99,
+  full_family: 29.99,
+  bundle: 54.99,
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -34,6 +41,23 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'planId, name, email, and reference are required.' });
   }
 
+  // Validate planId against known plans and enforce server-authoritative amount.
+  if (!Object.prototype.hasOwnProperty.call(PLAN_AMOUNTS, planId)) {
+    return res.status(400).json({ error: 'Unknown plan.' });
+  }
+  const authorisedAmount = PLAN_AMOUNTS[planId];
+
+  // Basic input length guards.
+  if (typeof name !== 'string' || name.trim().length === 0 || name.length > 200) {
+    return res.status(400).json({ error: 'Invalid name.' });
+  }
+  if (typeof email !== 'string' || email.length > 320 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    return res.status(400).json({ error: 'Invalid email address.' });
+  }
+  if (typeof reference !== 'string' || reference.trim().length === 0 || reference.length > 100) {
+    return res.status(400).json({ error: 'Invalid payment reference.' });
+  }
+
   try {
     const { error: dbError } = await supabase
       .from('manual_payment_requests')
@@ -41,10 +65,10 @@ export default async function handler(req, res) {
         app: app ?? 'little-ones-ai',
         plan_id: planId,
         plan_name: planName,
-        amount,
-        name,
-        email,
-        reference,
+        amount: authorisedAmount,
+        name: name.trim(),
+        email: email.trim(),
+        reference: reference.trim(),
         status: 'pending',
       });
 
