@@ -128,8 +128,10 @@ function LittleOnesAI() {
   const categories = ['all', 'Math', 'Literacy', 'Language', 'Creative Arts', 'Science'];
 
   /**
-   * Parse an age-range string such as "2-4 years" or "0-1" into { min, max }.
-   * Handles both activity ranges ("2-4 years") and childAge option values ("2-3").
+   * Parse an age-range string into { min, max }.
+   * Handles activity ageRange values ("2-4 years") and childAge option values ("2-3").
+   * The character class includes both a regular hyphen (-) and an en dash (–) because
+   * activity descriptions may use either typographic convention.
    */
   function parseAgeRange(rangeStr) {
     const match = String(rangeStr).match(/(\d+)[–\-](\d+)/);
@@ -237,7 +239,7 @@ function LittleOnesAI() {
                 <div className="category-bar" style={{ marginBottom: '0.5rem' }}>
                   <button
                     className="category-btn active"
-                    onClick={() => { setAppliedAge(''); setChildAge(''); }}
+                    onClick={() => setAppliedAge('')}
                     aria-label="Clear age filter"
                   >
                     ✕ Clear age filter

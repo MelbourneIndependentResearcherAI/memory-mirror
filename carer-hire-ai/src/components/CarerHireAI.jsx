@@ -209,7 +209,12 @@ function ChatInterface({ carer, onBack }) {
     rec.onend = () => {
       setListening(false);
       if (voiceRef.current && !aiSpeakingRef.current && !loadingRef.current) {
-        setTimeout(() => startListening(), VOICE_RESTART_DELAY_MS);
+        setTimeout(() => {
+          // Re-check refs after the delay — state may have changed during the wait.
+          if (voiceRef.current && !aiSpeakingRef.current && !loadingRef.current) {
+            startListening();
+          }
+        }, VOICE_RESTART_DELAY_MS);
       }
     };
     recRef.current = rec;
@@ -248,7 +253,11 @@ function ChatInterface({ carer, onBack }) {
         setAiSpeaking(true);
         speak(reply, () => {
           setAiSpeaking(false);
-          if (voiceRef.current) setTimeout(() => startListening(), VOICE_RESTART_DELAY_MS);
+          if (voiceRef.current) {
+            setTimeout(() => {
+              if (voiceRef.current && !loadingRef.current) startListening();
+            }, VOICE_RESTART_DELAY_MS);
+          }
         });
       }
     } catch (err) {
@@ -256,7 +265,13 @@ function ChatInterface({ carer, onBack }) {
       const fallback = "I'm right here. Tell me more.";
       setMessages(h => [...h, { role: "assistant", text: fallback }]);
       setLoading(false);
-      if (voiceRef.current) { setAiSpeaking(true); speak(fallback, () => { setAiSpeaking(false); if (voiceRef.current) startListening(); }); }
+      if (voiceRef.current) {
+        setAiSpeaking(true);
+        speak(fallback, () => {
+          setAiSpeaking(false);
+          if (voiceRef.current && !loadingRef.current) startListening();
+        });
+      }
     }
   };
 
