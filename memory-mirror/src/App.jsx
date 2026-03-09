@@ -124,6 +124,7 @@ function ChatScreen({ onBack }) {
   };
 
   const sendMessage = async (text) => {
+    if (loading) return;
     const msg = (text || input).trim();
     if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
@@ -133,6 +134,13 @@ function ChatScreen({ onBack }) {
     messagesRef.current = newHistory;
     setMessages(newHistory);
     loadingRef.current = true; setLoading(true);
+    // Build API-safe messages: skip leading assistant messages, ensure strict alternation
+    const apiMessages = newHistory.reduce((acc, m) => {
+      if (acc.length === 0 && m.role !== "user") return acc;
+      if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
+      return [...acc, { role: m.role, content: m.text }];
+    }, []);
+    console.log("API messages:", JSON.stringify(apiMessages, null, 2));
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -144,7 +152,7 @@ function ChatScreen({ onBack }) {
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514", max_tokens: 1000,
           system: SYSTEM_PROMPT,
-          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
+          messages: apiMessages,
         }),
       });
       const data = await res.json();

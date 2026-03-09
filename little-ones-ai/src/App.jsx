@@ -161,6 +161,7 @@ function ChatInterface({ gc, onBack }) {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   const sendMessage = async (text) => {
+    if (loading) return;
     const msg = (text || input).trim();
     if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
@@ -173,6 +174,14 @@ function ChatInterface({ gc, onBack }) {
     loadingRef.current = true;
     setLoading(true);
 
+    // Build API-safe messages: skip leading assistant messages, ensure strict alternation
+    const apiMessages = newHistory.reduce((acc, m) => {
+      if (acc.length === 0 && m.role !== "user") return acc;
+      if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
+      return [...acc, { role: m.role, content: m.text }];
+    }, []);
+    console.log("API messages:", JSON.stringify(apiMessages, null, 2));
+
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -182,7 +191,7 @@ function ChatInterface({ gc, onBack }) {
           max_tokens: 1000,
           system: gc.systemPrompt,
           // Send full conversation history so AI never repeats itself
-          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
+          messages: apiMessages,
         }),
       });
       const data = await res.json();
