@@ -38,7 +38,7 @@ const FEATURES = [
   { id: "music", icon: "🎵", label: "Music Therapy", desc: "Familiar songs and calm" },
   { id: "night", icon: "🌙", label: "Night Watch", desc: "Calm night-time support" },
   { id: "gps", icon: "📍", label: "GPS Safety", desc: "Location peace of mind" },
-  { id: "family", icon: "👨‍👩‍👧", label: "Family Connect", desc: "Keep everyone close" },
+  { id: "family", icon: "👨‍👩‍��", label: "Family Connect", desc: "Keep everyone close" },
   { id: "portal", icon: "🏥", label: "Carer Portal", desc: "Professional care tools" },
   { id: "pricing", icon: "💙", label: "Pricing", desc: "Simple, honest plans" },
 ];
@@ -61,12 +61,6 @@ const MUSIC_PLAYLISTS = [
   { name: "Gospel & Hymns", emoji: "✝️", desc: "Familiar, comforting sacred music", mood: "spiritual" },
 ];
 
-const CONTACT_EMAIL = "mcnamaram86@gmail.com";
-const BUSINESS_NAME = "Memory Mirror • MM AI Technologies";
-const BUSINESS_ABN = "ABN: 22366098626";
-const BUSINESS_FOUNDER = "Built by Michael McNamara — Aboriginal Australian — for every family who needed it.";
-const PAYID = "mickiimac@up.me";
-
 // ─── SPEECH UTILITIES ─────────────────────────────────────────────────────────
 function speak(text, onEnd, rate = 0.88) {
   if (!window.speechSynthesis) { onEnd?.(); return; }
@@ -74,11 +68,9 @@ function speak(text, onEnd, rate = 0.88) {
   const utt = new SpeechSynthesisUtterance(text);
   utt.rate = rate; utt.pitch = 1.05; utt.volume = 1;
   const voices = window.speechSynthesis.getVoices();
-  if (voices.length > 0) {
-    const pick = voices.find(v => /karen|samantha|moira|fiona|victoria/i.test(v.name))
-      || voices.find(v => v.lang?.startsWith("en")) || voices[0];
-    if (pick) utt.voice = pick;
-  }
+  const pick = voices.find(v => /karen|samantha|moira|fiona|victoria/i.test(v.name))
+    || voices.find(v => v.lang?.startsWith("en")) || voices[0];
+  if (pick) utt.voice = pick;
   utt.onend = () => onEnd?.();
   utt.onerror = () => onEnd?.();
   window.speechSynthesis.speak(utt);
@@ -124,7 +116,6 @@ function ChatScreen({ onBack }) {
   };
 
   const sendMessage = async (text) => {
-    if (loading) return;
     const msg = (text || input).trim();
     if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
@@ -134,25 +125,14 @@ function ChatScreen({ onBack }) {
     messagesRef.current = newHistory;
     setMessages(newHistory);
     loadingRef.current = true; setLoading(true);
-    // Build API-safe messages: skip leading assistant messages, ensure strict alternation
-    const apiMessages = newHistory.reduce((acc, m) => {
-      if (acc.length === 0 && m.role !== "user") return acc;
-      if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
-      return [...acc, { role: m.role, content: m.text }];
-    }, []);
-    console.log("API messages:", JSON.stringify(apiMessages, null, 2));
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY || "",
-          "anthropic-version": "2023-06-01",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514", max_tokens: 1000,
           system: SYSTEM_PROMPT,
-          messages: apiMessages,
+          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
         }),
       });
       const data = await res.json();
@@ -394,7 +374,7 @@ function NightScreen({ onBack }) {
         <style>{`@keyframes starPulse{0%,100%{opacity:0.3}50%{opacity:1}}`}</style>
         {["✦", "✧", "✦"].map((s, i) => <span key={i} style={{ position: "absolute", top: `${15 + i*15}%`, left: `${10 + i*35}%`, color: "#aac", fontSize: 12, animation: `starPulse ${2 + i}s infinite`, animationDelay: `${i*0.7}s` }}>{s}</span>)}
 
-        <div style={{ fontSize: 72, marginBottom: 16 }}>🌙</div>
+        <div style={{ fontSize: 72, marginBottom: 16 }}>��</div>
         <div style={{ color: "#7AA7CC", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 52, fontWeight: 900, marginBottom: 8 }}>{time}</div>
         <div style={{ color: "#556677", fontSize: 16, marginBottom: 32 }}>{new Date().toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
 
@@ -558,7 +538,7 @@ function PortalScreen({ onBack }) {
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#060d1a" }}>
       <div style={{ background: "linear-gradient(135deg, #2C5F2E, #1B4020)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
         <button onClick={onBack} style={{ background: "none", border: "none", color: "#fff", fontSize: 22, cursor: "pointer" }}>←</button>
-        <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700 }}>🏥 Carer Portal</div>
+        <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700 }}>�� Carer Portal</div>
       </div>
 
       {/* Tabs */}
@@ -645,7 +625,7 @@ function PricingScreen({ onBack }) {
           { name: "Essential Care", price: "$9.99", period: "/month", desc: "Everything you need for daily dementia care", features: ["Everything in Free Trial", "Unlimited AI conversations", "Carer Portal", "Voice mode (hands-free)", "Email support"], highlight: true, cta: "Choose Essential" },
           { name: "Full Circle", price: "$18.99", period: "/month", desc: "Complete care for the whole family", features: ["Everything in Essential", "Family Connect full access", "Multiple user profiles", "Priority support", "Monthly care summaries"], highlight: false, cta: "Choose Full Circle" },
         ].map((plan, i) => (
-          <div key={i} style={{ background: plan.highlight ? "linear-gradient(135deg, #2C5F2E22, #1B402011)" : "#0f1e10", border: `2px solid ${plan.highlight ? "#74C69D" : "#2C5F2E33"}`, borderRadius: 20, padding: 24, marginBottom: 16, position: "relative", boxShadow: plan.highlight ? "0 0 30px #2C5F2E33" : "none" }}>
+          <div key={i} style={{ background: plan.highlight ? "linear-gradient(135deg, #2C5F2E22, #1B402011)" : "#0f1e10", border: `2px solid ${plan.highlight ? "#74C69D" : "#2C5F2E33"}`, borderRadius: 20, padding: 24, marginBottom: 16, position: "relative", transform: plan.highlight ? "none" : "none", boxShadow: plan.highlight ? "0 0 30px #2C5F2E33" : "none" }}>
             {plan.highlight && <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)", background: "#74C69D", borderRadius: 20, padding: "4px 16px", fontSize: 11, color: "#1B4020", fontWeight: 700, whiteSpace: "nowrap" }}>Most Popular 💙</div>}
             <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, color: "#fff", marginBottom: 6 }}>{plan.name}</div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 6 }}>
@@ -654,7 +634,7 @@ function PricingScreen({ onBack }) {
             </div>
             <p style={{ color: "#888", fontSize: 13, marginBottom: 14 }}>{plan.desc}</p>
             {plan.features.map(f => <div key={f} style={{ color: "#ccc", fontSize: 13, paddingBottom: 4 }}>✓  {f}</div>)}
-            <a href={`mailto:${CONTACT_EMAIL}?subject=Memory Mirror — ${plan.name} Subscription&body=Hi Michael, I'd like to subscribe to the ${plan.name} plan. Please send payment details.`}
+            <a href={`mailto:mcnamaram86@gmail.com?subject=Memory Mirror — ${plan.name} Subscription&body=Hi Michael, I'd like to subscribe to the ${plan.name} plan ($${plan.price}${plan.period}). Please send payment details.`}
               style={{ display: "block", width: "100%", marginTop: 18, padding: "13px", background: plan.highlight ? "#2C5F2E" : "none", border: `1px solid ${plan.highlight ? "#74C69D" : "#2C5F2E"}`, borderRadius: 14, color: "#fff", textAlign: "center", textDecoration: "none", fontSize: 15, fontFamily: "Georgia, serif", boxSizing: "border-box" }}>
               {plan.cta}
             </a>
@@ -666,11 +646,11 @@ function PricingScreen({ onBack }) {
           <div style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "#fff", fontSize: 18, marginBottom: 6 }}>Aged Care Facility</div>
           <div style={{ color: "#74C69D", fontSize: 28, fontWeight: 900, marginBottom: 6 }}>$299<span style={{ fontSize: 14, color: "#888" }}>/month</span></div>
           <p style={{ color: "#888", fontSize: 13, marginBottom: 14 }}>Unlimited residents, staff portal access, full platform suite</p>
-          <a href={`mailto:${CONTACT_EMAIL}?subject=Memory Mirror — Facility Licence`} style={{ display: "block", padding: "12px", background: "#2C5F2E", borderRadius: 14, color: "#fff", textDecoration: "none", fontSize: 14 }}>Enquire About Facility Licence</a>
+          <a href="mailto:mcnamaram86@gmail.com?subject=Memory Mirror — Facility Licence" style={{ display: "block", padding: "12px", background: "#2C5F2E", borderRadius: 14, color: "#fff", textDecoration: "none", fontSize: 14 }}>Enquire About Facility Licence</a>
         </div>
 
         <div style={{ textAlign: "center", color: "#555", fontSize: 12, paddingBottom: 20 }}>
-          Payment via PayID: {PAYID} or bank transfer. Contact {CONTACT_EMAIL} to activate your plan.
+          Payment via PayID: mickiimac@up.me or bank transfer. Contact mcnamaram86@gmail.com to activate your plan.
         </div>
       </div>
     </div>
@@ -813,8 +793,8 @@ function HomeScreen({ onNavigate }) {
       {/* Footer */}
       <div style={{ borderTop: "1px solid #1a3020", padding: "24px 20px", textAlign: "center" }}>
         <div style={{ color: "#2C5F2E", fontSize: 18, marginBottom: 8 }}>💙</div>
-        <div style={{ color: "#334", fontSize: 13 }}>{BUSINESS_NAME} • {BUSINESS_ABN}</div>
-        <div style={{ color: "#334", fontSize: 11, marginTop: 4 }}>{BUSINESS_FOUNDER}</div>
+        <div style={{ color: "#334", fontSize: 13 }}>Memory Mirror • MM AI Technologies • ABN: 22366098626</div>
+        <div style={{ color: "#334", fontSize: 11, marginTop: 4 }}>Built by Michael McNamara — Aboriginal Australian — for every family who needed it.</div>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 12, flexWrap: "wrap" }}>
           {FEATURES.map(f => <button key={f.id} onClick={() => onNavigate(f.id)} style={{ background: "none", border: "none", color: "#445", cursor: "pointer", fontSize: 11 }}>{f.label}</button>)}
         </div>
