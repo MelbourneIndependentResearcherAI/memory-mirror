@@ -489,8 +489,8 @@ function LittleOnesAI() {
             <button className="btn-primary nav-btn" onClick={() => setScreen('chat')}>
               <MessageCircle size={14} style={{ marginRight: 4, verticalAlign: 'middle' }} />Chat with Sunny
             </button>
-            <button className="btn-primary nav-btn" onClick={() => setScreen('pricing')}>Pricing</button>
-            <button className="btn-primary nav-btn" onClick={() => setScreen('home')}>Get Started Free</button>
+            <button className="btn-primary nav-btn hide-mobile" onClick={() => setScreen('pricing')}>Pricing</button>
+            <button className="btn-primary nav-btn hide-mobile" onClick={() => setScreen('home')}>Get Started Free</button>
           </nav>
         </div>
       </header>
