@@ -377,9 +377,10 @@ body {
   .hero-subtitle { font-size: 1rem; }
   .header { padding: 0.75rem 1rem; }
   .header-nav a { display: none; }
-  .header-content { flex-wrap: wrap; gap: 0.5rem; }
-  .header-nav { gap: 0.5rem; flex-wrap: wrap; }
-  .nav-btn { font-size: 0.82rem !important; padding: 0.45rem 0.9rem !important; }
+  .hide-mobile { display: none !important; }
+  .header-content { flex-wrap: nowrap; gap: 0.5rem; }
+  .header-nav { gap: 0.5rem; flex-wrap: nowrap; }
+  .nav-btn { font-size: 0.82rem !important; padding: 0.45rem 0.9rem !important; white-space: nowrap; }
   .features-section { padding: 2.5rem 1rem; }
   .activities-section { padding: 2.5rem 1rem; }
   .cta-section { padding: 2.5rem 1rem; }
@@ -402,8 +403,7 @@ body {
   .age-selector .btn-primary { width: 100%; }
   .hero-badges { gap: 0.5rem; }
   .badge { font-size: 0.78rem; padding: 0.3rem 0.75rem; }
-  .header-nav { flex-direction: column; width: 100%; }
-  .nav-btn { width: 100% !important; text-align: center; font-size: 0.82rem !important; padding: 0.5rem 0.75rem !important; }
+  .nav-btn { font-size: 0.78rem !important; padding: 0.4rem 0.75rem !important; }
   .cta-content h2 { font-size: 1.4rem; }
   .cta-content p { font-size: 0.9rem; }
   .activity-card { padding: 1.1rem; }
