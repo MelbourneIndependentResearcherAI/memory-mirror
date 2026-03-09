@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import Pricing from "./Pricing";
 
 const CARERS = [
@@ -173,19 +173,20 @@ function ChatInterface({ carer, onBack }) {
   const [liveTranscript, setLiveTranscript] = useState("");
   const bottomRef = useRef(null);
   const recRef = useRef(null);
-  // Refs mirror state values so that memoised callbacks always read current values.
+  // Refs mirror state values so that callbacks always read current values without stale closures.
   const voiceRef = useRef(false);
   const aiSpeakingRef = useRef(false);
   const loadingRef = useRef(false);
-  // Always points to the latest sendMessage — avoids stale closure in startListening.
-  const sendMessageRef = useRef(null);
+  // messagesRef stays in sync with messages so sendMessage always builds history from current state.
+  const messagesRef = useRef([{ role: "assistant", text: carer.greeting }]);
 
   useEffect(() => { voiceRef.current = voiceMode; }, [voiceMode]);
   useEffect(() => { aiSpeakingRef.current = aiSpeaking; }, [aiSpeaking]);
   useEffect(() => { loadingRef.current = loading; }, [loading]);
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  const startListening = useCallback(() => {
+  const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { alert("Voice not supported in this browser. Try Chrome."); return; }
     if (recRef.current) { try { recRef.current.abort(); } catch (err) { console.warn("Speech recognition abort failed:", err); } }
@@ -200,8 +201,7 @@ function ChatInterface({ carer, onBack }) {
       if (e.results[e.results.length - 1].isFinal) {
         setLiveTranscript("");
         setListening(false);
-        // Use ref so we always call the latest sendMessage with up-to-date state.
-        sendMessageRef.current?.(t);
+        sendMessage(t);
       }
     };
     rec.onerror = () => { setListening(false); setLiveTranscript(""); };
@@ -219,16 +219,18 @@ function ChatInterface({ carer, onBack }) {
     };
     recRef.current = rec;
     try { rec.start(); } catch (err) { console.warn("Speech recognition start failed:", err); }
-  }, []);
+  };
 
   const sendMessage = async (text) => {
     const msg = (text || input).trim();
-    if (!msg || loading) return;
+    if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
     window.speechSynthesis?.cancel();
 
     const userMsg = { role: "user", text: msg };
-    const newHistory = [...messages, userMsg];
+    // Use messagesRef.current so we always read the latest conversation history,
+    // even when sendMessage is called from inside the startListening closure.
+    const newHistory = [...messagesRef.current, userMsg];
     setMessages(newHistory);
     setLoading(true);
 
@@ -274,9 +276,6 @@ function ChatInterface({ carer, onBack }) {
       }
     }
   };
-
-  // Keep the ref pointing to the latest sendMessage on every render.
-  sendMessageRef.current = sendMessage;
 
   const toggleVoice = () => {
     if (voiceMode) {
