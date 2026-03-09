@@ -215,11 +215,11 @@ function SessionScreen({ companion, onBack, onComplete }) {
   };
 
   if (sessionDone) return (
-    <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${companion.color}, ${companion.color2})`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 40, textAlign: "center" }}>
+    <div className="fresh-done-screen" style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${companion.color}, ${companion.color2})`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 40, textAlign: "center" }}>
       <style>{`@keyframes celebrate{0%,100%{transform:scale(1) rotate(0deg)}25%{transform:scale(1.2) rotate(-5deg)}75%{transform:scale(1.2) rotate(5deg)}}`}</style>
-      <div style={{ fontSize: 100, animation: "celebrate 1s ease infinite" }}>✨</div>
-      <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 52, color: "#fff", margin: "24px 0 16px" }}>All Done!</h1>
-      <p style={{ color: "#ffffff99", fontSize: 20, maxWidth: 400, lineHeight: 1.8, marginBottom: 40 }}>Fresh, clean and wonderful. You did it — every single step. Something to be proud of.</p>
+      <div className="fresh-done-emoji" style={{ fontSize: 100, animation: "celebrate 1s ease infinite" }}>✨</div>
+      <h1 className="fresh-done-title" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 52, color: "#fff", margin: "24px 0 16px" }}>All Done!</h1>
+      <p className="fresh-done-desc" style={{ color: "#ffffff99", fontSize: 20, maxWidth: 400, lineHeight: 1.8, marginBottom: 40 }}>Fresh, clean and wonderful. You did it — every single step. Something to be proud of.</p>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
         <button onClick={onComplete} style={{ background: "#fff", border: "none", borderRadius: 16, padding: "16px 36px", fontSize: 17, color: companion.color, cursor: "pointer", fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}>Back Home 🏠</button>
         <button onClick={() => { setMessages([{ role: "assistant", text: companion.greeting }]); setCurrentStep(0); setSessionDone(false); }} style={{ background: "none", border: "2px solid #fff", borderRadius: 16, padding: "16px 36px", fontSize: 17, color: "#fff", cursor: "pointer" }}>New Session 🔄</button>
@@ -247,7 +247,7 @@ function SessionScreen({ companion, onBack, onComplete }) {
           <div style={{ color: "#ffffff77", fontSize: 12 }}>Shower Session • Step {currentStep + 1} of {STEPS.length}</div>
         </div>
         <button onClick={toggleVoice} style={{ background: voiceMode ? "#ffffff33" : "none", border: `2px solid ${voiceMode ? "#fff" : "#ffffff55"}`, borderRadius: 12, padding: "7px 14px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
-          <span>{voiceMode ? "🎙️" : "🔇"}</span><span>{voiceMode ? "Hands-Free ON" : "Hands-Free"}</span>
+          <span>{voiceMode ? "🎙️" : "🔇"}</span><span className="fresh-voice-btn-text">{voiceMode ? "Hands-Free ON" : "Hands-Free"}</span>
         </button>
       </div>
 
@@ -401,15 +401,15 @@ export default function FreshStartAI() {
       `}</style>
 
       {/* Nav */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "#060d1acc", backdropFilter: "blur(20px)", borderBottom: "1px solid #1D6FA433", padding: "0 24px", display: "flex", alignItems: "center", gap: 14, height: 64 }}>
+      <nav className="fresh-nav" style={{ position: "sticky", top: 0, zIndex: 100, background: "#060d1acc", backdropFilter: "blur(20px)", borderBottom: "1px solid #1D6FA433", padding: "0 24px", display: "flex", alignItems: "center", gap: 14, height: 64 }}>
         <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 22 }}>💧</span>
           <span style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 21, fontWeight: 900 }}>Fresh Start AI</span>
         </button>
-        <span style={{ color: "#56B4D3", fontSize: 11, background: "#1D6FA422", padding: "3px 10px", borderRadius: 20, border: "1px solid #1D6FA433" }}>Shower Companion</span>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+        <span className="fresh-nav-badge" style={{ color: "#56B4D3", fontSize: 11, background: "#1D6FA422", padding: "3px 10px", borderRadius: 20, border: "1px solid #1D6FA433" }}>Shower Companion</span>
+        <div className="fresh-nav-links" style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
           {[["home","Home"],["companions","Companions"],["pricing","Pricing"]].map(([s,l]) => (
-            <button key={s} onClick={() => setScreen(s)} style={{ background: screen === s ? "#1D6FA4" : "none", border: `1px solid ${screen === s ? "#1D6FA4" : "#1e3050"}`, color: "#fff", borderRadius: 10, padding: "7px 14px", cursor: "pointer", fontSize: 12 }}>{l}</button>
+            <button key={s} onClick={() => setScreen(s)} className="fresh-nav-btn" style={{ background: screen === s ? "#1D6FA4" : "none", border: `1px solid ${screen === s ? "#1D6FA4" : "#1e3050"}`, color: "#fff", borderRadius: 10, padding: "7px 14px", cursor: "pointer", fontSize: 12 }}>{l}</button>
           ))}
         </div>
       </nav>
@@ -417,14 +417,14 @@ export default function FreshStartAI() {
       {screen === "home" && (
         <div>
           {/* Hero */}
-          <div style={{ minHeight: "90vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+          <div className="fresh-hero-section" style={{ minHeight: "90vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 50% 0%, #1D6FA444 0%, transparent 65%)", pointerEvents: "none" }} />
             {/* Water droplets */}
             {[...Array(6)].map((_, i) => (
               <div key={i} style={{ position: "absolute", fontSize: 24, opacity: 0.1, animation: `float ${3 + i * 0.5}s ease-in-out infinite`, animationDelay: `${i * 0.4}s`, left: `${10 + i * 15}%`, top: `${10 + (i % 3) * 25}%`, pointerEvents: "none" }}>💧</div>
             ))}
 
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#1D6FA422", border: "1px solid #1D6FA444", borderRadius: 30, padding: "8px 20px", marginBottom: 28, animation: "fadeUp 0.5s ease both" }}>
+            <div className="fresh-hero-badge" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#1D6FA422", border: "1px solid #1D6FA444", borderRadius: 30, padding: "8px 20px", marginBottom: 28, animation: "fadeUp 0.5s ease both" }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#56B4D3", display: "inline-block", animation: "pulse 2s infinite" }} />
               <span style={{ color: "#56B4D3", fontSize: 13 }}>4 Gentle Companions • Hands-Free Voice • Step-by-Step Guide</span>
             </div>
@@ -506,7 +506,7 @@ export default function FreshStartAI() {
           </div>
 
           {/* Quote */}
-          <div style={{ margin: "0 auto 80px", padding: "48px", background: "linear-gradient(135deg, #1D6FA422, #0D4F7A11)", border: "1px solid #1D6FA433", borderRadius: 24, maxWidth: 800, textAlign: "center" }}>
+          <div className="fresh-quote-section" style={{ margin: "0 auto 80px", padding: "48px", background: "linear-gradient(135deg, #1D6FA422, #0D4F7A11)", border: "1px solid #1D6FA433", borderRadius: 24, maxWidth: 800, textAlign: "center" }}>
             <div style={{ fontSize: 48, marginBottom: 20 }}>💧</div>
             <p style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, lineHeight: 1.9, color: "#ccc", fontStyle: "italic", margin: "0 0 16px" }}>
               "Showering resistance is one of the most heartbreaking and exhausting parts of dementia care. Fresh Start AI doesn't fight the resistance — it dissolves it with warmth."
@@ -517,7 +517,7 @@ export default function FreshStartAI() {
       )}
 
       {screen === "companions" && (
-        <div style={{ padding: "40px 24px", maxWidth: 1100, margin: "0 auto" }}>
+        <div className="fresh-companions-screen" style={{ padding: "40px 24px", maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ marginBottom: 36, animation: "fadeUp 0.4s ease both" }}>
             <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 44, marginBottom: 10 }}>Choose a <span style={{ color: "#56B4D3" }}>Companion</span></h1>
             <p style={{ color: "#667", fontSize: 15 }}>Each companion has a unique approach. Choose who your loved one responds to most.</p>
@@ -533,7 +533,7 @@ export default function FreshStartAI() {
       )}
 
       {screen === "pricing" && (
-        <div style={{ padding: "60px 24px", maxWidth: 860, margin: "0 auto", animation: "fadeUp 0.4s ease both" }}>
+        <div className="fresh-pricing-screen" style={{ padding: "60px 24px", maxWidth: 860, margin: "0 auto", animation: "fadeUp 0.4s ease both" }}>
           <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 46, textAlign: "center", marginBottom: 12 }}>Simple <span style={{ color: "#56B4D3" }}>Pricing</span></h1>
           <p style={{ color: "#667", textAlign: "center", marginBottom: 48 }}>Because every carer deserves this support.</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20 }}>
@@ -543,7 +543,7 @@ export default function FreshStartAI() {
               { name: "Full Access", price: "$19.99", period: "/month", desc: "All 4 companions, unlimited sessions, session history", highlight: true },
               { name: "Family Bundle", price: "$39.99", period: "/month", desc: "Full Access + Memory Mirror + Carer Hire AI", highlight: false },
             ].map((p, i) => (
-              <div key={i} style={{ background: p.highlight ? "#1D6FA422" : "#0f1e35", border: `2px solid ${p.highlight ? "#1D6FA4" : "#1e3050"}`, borderRadius: 20, padding: 28, textAlign: "center", position: "relative", transform: p.highlight ? "scale(1.04)" : "none", boxShadow: p.highlight ? "0 0 40px #1D6FA433" : "none" }}>
+              <div key={i} className={p.highlight ? "fresh-pricing-highlighted" : ""} style={{ background: p.highlight ? "#1D6FA422" : "#0f1e35", border: `2px solid ${p.highlight ? "#1D6FA4" : "#1e3050"}`, borderRadius: 20, padding: 28, textAlign: "center", position: "relative", transform: p.highlight ? "scale(1.04)" : "none", boxShadow: p.highlight ? "0 0 40px #1D6FA433" : "none" }}>
                 {p.highlight && <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)", background: "linear-gradient(135deg, #1D6FA4, #0D4F7A)", borderRadius: 20, padding: "4px 16px", fontSize: 11, color: "#fff", whiteSpace: "nowrap" }}>Most Popular 💧</div>}
                 <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, marginBottom: 14, color: "#fff" }}>{p.name}</div>
                 <div style={{ fontSize: 40, fontWeight: 900, color: p.highlight ? "#56B4D3" : "#fff", marginBottom: 4 }}>{p.price}</div>
