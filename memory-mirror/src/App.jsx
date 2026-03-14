@@ -38,7 +38,7 @@ const FEATURES = [
   { id: "music", icon: "🎵", label: "Music Therapy", desc: "Familiar songs and calm" },
   { id: "night", icon: "🌙", label: "Night Watch", desc: "Calm night-time support" },
   { id: "gps", icon: "📍", label: "GPS Safety", desc: "Location peace of mind" },
-  { id: "family", icon: "👨‍👩‍��", label: "Family Connect", desc: "Keep everyone close" },
+  { id: "family", icon: "👪", label: "Family Connect", desc: "Keep everyone close" },
   { id: "portal", icon: "🏥", label: "Carer Portal", desc: "Professional care tools" },
   { id: "pricing", icon: "💙", label: "Pricing", desc: "Simple, honest plans" },
 ];
@@ -379,7 +379,7 @@ function NightScreen({ onBack }) {
         <style>{`@keyframes starPulse{0%,100%{opacity:0.3}50%{opacity:1}}`}</style>
         {["✦", "✧", "✦"].map((s, i) => <span key={i} style={{ position: "absolute", top: `${15 + i*15}%`, left: `${10 + i*35}%`, color: "#aac", fontSize: 12, animation: `starPulse ${2 + i}s infinite`, animationDelay: `${i*0.7}s` }}>{s}</span>)}
 
-        <div style={{ fontSize: 72, marginBottom: 16 }}>��</div>
+        <div style={{ fontSize: 72, marginBottom: 16 }}>🌙</div>
         <div style={{ color: "#7AA7CC", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 52, fontWeight: 900, marginBottom: 8 }}>{time}</div>
         <div style={{ color: "#556677", fontSize: 16, marginBottom: 32 }}>{new Date().toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
 
@@ -543,7 +543,7 @@ function PortalScreen({ onBack }) {
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#060d1a" }}>
       <div style={{ background: "linear-gradient(135deg, #2C5F2E, #1B4020)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
         <button onClick={onBack} style={{ background: "none", border: "none", color: "#fff", fontSize: 22, cursor: "pointer" }}>←</button>
-        <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700 }}>�� Carer Portal</div>
+        <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700 }}>🏥 Carer Portal</div>
       </div>
 
       {/* Tabs */}
