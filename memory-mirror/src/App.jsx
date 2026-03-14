@@ -86,6 +86,7 @@ function ChatScreen({ onBack }) {
   const [listening, setListening] = useState(false);
   const [aiSpeaking, setAiSpeaking] = useState(false);
   const [liveTranscript, setLiveTranscript] = useState("");
+  const [lastRequestFailed, setLastRequestFailed] = useState(false);
   const bottomRef = useRef(null);
   const recRef = useRef(null);
   const voiceRef = useRef(false);
@@ -115,10 +116,31 @@ function ChatScreen({ onBack }) {
     try { rec.start(); } catch {}
   };
 
+  const callAnthropicAPI = async (history) => {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY ?? "",
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514", max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: history.map(m => ({ role: m.role, content: m.text })),
+      }),
+    });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const data = await res.json();
+    return data.content?.find(b => b.type === "text")?.text || "I'm right here with you, love.";
+  };
+
   const sendMessage = async (text) => {
     const msg = (text || input).trim();
     if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
+    setLastRequestFailed(false);
     window.speechSynthesis?.cancel();
     const userMsg = { role: "user", text: msg };
     const newHistory = [...messagesRef.current, userMsg];
@@ -126,32 +148,33 @@ function ChatScreen({ onBack }) {
     setMessages(newHistory);
     loadingRef.current = true; setLoading(true);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY ?? "",
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514", max_tokens: 1000,
-          system: SYSTEM_PROMPT,
-          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
-        }),
-      });
-      const data = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text || "I'm right here with you, love.";
+      const reply = await callAnthropicAPI(newHistory);
       const withReply = [...newHistory, { role: "assistant", text: reply }];
       messagesRef.current = withReply; setMessages(withReply);
       loadingRef.current = false; setLoading(false);
       if (voiceRef.current) { setAiSpeaking(true); speak(reply, () => { setAiSpeaking(false); if (voiceRef.current) setTimeout(startListening, 400); }); }
     } catch {
-      const fallback = "I'm right here, take your time.";
-      const withFallback = [...messagesRef.current, { role: "assistant", text: fallback }];
-      messagesRef.current = withFallback; setMessages(withFallback);
+      setLastRequestFailed(true);
       loadingRef.current = false; setLoading(false);
-      if (voiceRef.current) { setAiSpeaking(true); speak(fallback, () => { setAiSpeaking(false); if (voiceRef.current) startListening(); }); }
+      if (voiceRef.current) { setAiSpeaking(false); }
+    }
+  };
+
+  const retryLastRequest = async () => {
+    if (!lastRequestFailed || loadingRef.current) return;
+    setLastRequestFailed(false);
+    const history = messagesRef.current;
+    loadingRef.current = true; setLoading(true);
+    try {
+      const reply = await callAnthropicAPI(history);
+      const withReply = [...history, { role: "assistant", text: reply }];
+      messagesRef.current = withReply; setMessages(withReply);
+      loadingRef.current = false; setLoading(false);
+      if (voiceRef.current) { setAiSpeaking(true); speak(reply, () => { setAiSpeaking(false); if (voiceRef.current) setTimeout(startListening, 400); }); }
+    } catch {
+      setLastRequestFailed(true);
+      loadingRef.current = false; setLoading(false);
+      if (voiceRef.current) { setAiSpeaking(false); }
     }
   };
 
@@ -225,6 +248,16 @@ function ChatScreen({ onBack }) {
         )}
         <div ref={bottomRef} />
       </div>
+
+      {/* Error banner with retry */}
+      {lastRequestFailed && (
+        <div style={{ padding: "10px 16px", background: "#1a0a0a", borderTop: "1px solid #5a1a1a", borderBottom: "1px solid #5a1a1a", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexShrink: 0 }}>
+          <span style={{ color: "#EF9A9A", fontSize: 13, fontFamily: "Georgia, serif" }}>⚠️ Couldn't connect — please try again.</span>
+          <button onClick={retryLastRequest} disabled={loading} style={{ background: "#2C5F2E", border: "none", borderRadius: 10, padding: "7px 16px", color: "#fff", cursor: "pointer", fontSize: 13, fontFamily: "Georgia, serif", opacity: loading ? 0.5 : 1, whiteSpace: "nowrap" }}>
+            Try Again
+          </button>
+        </div>
+      )}
 
       {/* Input */}
       <div style={{ padding: "12px 16px 20px", background: "#060d1a", borderTop: "1px solid #1a3020", flexShrink: 0 }}>
