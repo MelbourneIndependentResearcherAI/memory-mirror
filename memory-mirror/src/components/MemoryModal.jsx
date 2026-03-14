@@ -88,7 +88,7 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
     onClose();
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleAddTag();
@@ -172,7 +172,7 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
                   type="text"
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                   placeholder="Add tags..."
                 />
                 <button
