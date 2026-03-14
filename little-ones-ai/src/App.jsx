@@ -183,19 +183,17 @@ function ChatInterface({ gc, onBack }) {
     console.log("API messages:", JSON.stringify(apiMessages, null, 2));
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: gc.systemPrompt,
-          // Send full conversation history so AI never repeats itself
+          systemPrompt: gc.systemPrompt,
           messages: apiMessages,
         }),
       });
       const data = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text || "Tell me more Nanny!";
+      if (!res.ok) throw new Error(data.error || "API error");
+      const reply = data.text || "Tell me more Nanny!";
       const withReply = [...newHistory, { role: "assistant", text: reply }];
       messagesRef.current = withReply;
       setMessages(withReply);

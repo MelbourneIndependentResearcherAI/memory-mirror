@@ -125,18 +125,26 @@ function ChatScreen({ onBack }) {
     messagesRef.current = newHistory;
     setMessages(newHistory);
     loadingRef.current = true; setLoading(true);
+
+    // Build API-safe messages: skip leading assistant messages, ensure strict alternation
+    const apiMessages = newHistory.reduce((acc, m) => {
+      if (acc.length === 0 && m.role !== "user") return acc;
+      if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
+      return [...acc, { role: m.role, content: m.text }];
+    }, []);
+
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514", max_tokens: 1000,
-          system: SYSTEM_PROMPT,
-          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
+          systemPrompt: SYSTEM_PROMPT,
+          messages: apiMessages,
         }),
       });
       const data = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text || "I'm right here with you, love.";
+      if (!res.ok) throw new Error(data.error || "API error");
+      const reply = data.text || "I'm right here with you, love.";
       const withReply = [...newHistory, { role: "assistant", text: reply }];
       messagesRef.current = withReply; setMessages(withReply);
       loadingRef.current = false; setLoading(false);

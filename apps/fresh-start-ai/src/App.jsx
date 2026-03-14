@@ -125,6 +125,9 @@ function SessionScreen({ companion, onBack, onComplete }) {
   const bottomRef = useRef(null);
   const recRef = useRef(null);
   const voiceRef = useRef(false);
+  // Always-current message history ref so voice callbacks never use stale state
+  const messagesRef = useRef([{ role: "assistant", text: companion.greeting }]);
+  const loadingRef = useRef(false);
 
   useEffect(() => { voiceRef.current = voiceMode; }, [voiceMode]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
@@ -151,37 +154,43 @@ function SessionScreen({ companion, onBack, onComplete }) {
 
   const sendMessage = async (text) => {
     const msg = (text || input).trim();
-    if (!msg || loading) return;
+    if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
     window.speechSynthesis?.cancel();
     const userMsg = { role: "user", text: msg };
-    const newHistory = [...messages, userMsg];
+    const newHistory = [...messagesRef.current, userMsg];
+    messagesRef.current = newHistory;
     setMessages(newHistory);
+    loadingRef.current = true;
     setLoading(true);
+
+    // Build API-safe messages: skip leading assistant messages, ensure strict alternation
+    const apiMessages = newHistory.reduce((acc, m) => {
+      if (acc.length === 0 && m.role !== "user") return acc;
+      if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
+      return [...acc, { role: m.role, content: m.text }];
+    }, []);
 
     const stepContext = currentStep < STEPS.length
       ? `Current shower step: ${STEPS[currentStep].label} — ${STEPS[currentStep].desc}`
       : "Session complete — celebrate!";
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY ?? "",
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: companion.systemPrompt + `\n\nCurrent step context: ${stepContext}\nTotal steps: 7. When a step is completed naturally move to encourage the next step.`,
-          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
+          systemPrompt: companion.systemPrompt + `\n\nCurrent step context: ${stepContext}\nTotal steps: 7. When a step is completed naturally move to encourage the next step.`,
+          messages: apiMessages,
         }),
       });
       const data = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text || "You're doing so well. Keep going.";
-      setMessages(h => [...h, { role: "assistant", text: reply }]);
+      if (!res.ok) throw new Error(data.error || "API error");
+      const reply = data.text || "You're doing so well. Keep going.";
+      const withReply = [...newHistory, { role: "assistant", text: reply }];
+      messagesRef.current = withReply;
+      setMessages(withReply);
+      loadingRef.current = false;
       setLoading(false);
 
       // Auto advance step on positive responses
@@ -196,7 +205,10 @@ function SessionScreen({ companion, onBack, onComplete }) {
       }
     } catch {
       const fallback = "You're doing beautifully. Take your time.";
-      setMessages(h => [...h, { role: "assistant", text: fallback }]);
+      const withFallback = [...messagesRef.current, { role: "assistant", text: fallback }];
+      messagesRef.current = withFallback;
+      loadingRef.current = false;
+      setMessages(withFallback);
       setLoading(false);
       if (voiceRef.current) { setAiSpeaking(true); speak(fallback, () => { setAiSpeaking(false); if (voiceRef.current) startListening(); }); }
     }
