@@ -193,7 +193,13 @@ function ChatScreen({ onBack }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           systemPrompt: SYSTEM_PROMPT,
-          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
+          // Skip leading assistant messages and ensure strict user/assistant alternation
+          // so the Anthropic API always receives a well-formed conversation.
+          messages: newHistory.reduce((acc, m) => {
+            if (acc.length === 0 && m.role !== "user") return acc;
+            if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
+            return [...acc, { role: m.role, content: m.text }];
+          }, []),
         }),
       });
       const data = await res.json();
