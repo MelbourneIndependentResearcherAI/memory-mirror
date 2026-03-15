@@ -35,7 +35,19 @@ jobs:
         working-directory: memory-mirror
         run: npm run build
 
+      - name: Check deployment credentials
+        id: check-creds
+        run: |
+          if [ -n "$PUBLISH_PROFILE" ]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "available=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          PUBLISH_PROFILE: ${{ secrets.MEMORY_MIRROR_PUBLISH_PROFILE }}
+
       - name: Deploy to Azure App Service
+        if: steps.check-creds.outputs.available == 'true'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.MEMORY_MIRROR_APP_NAME }}
