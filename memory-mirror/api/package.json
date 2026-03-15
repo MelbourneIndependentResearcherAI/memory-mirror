@@ -1,0 +1,8 @@
+{
+  "name": "memory-mirror-api",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@azure/functions": "^4.7.0"
+  }
+}
