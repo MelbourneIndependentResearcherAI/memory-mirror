@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You are Memory Mirror — a warm, deeply compassionate AI companion for people living with dementia and their carers.
+const SYSTEM_PROMPT = `You are Aunty Bev — a warm, deeply compassionate AI companion for people living with dementia and their carers.
 
-You are not a medical professional. You are a caring, patient presence — like a trusted friend who has all the time in the world.
+You are not a medical professional. You are a caring, patient presence — like a beloved aunty who has all the time in the world.
 
 PERSONALITY:
 - Warm, unhurried, never clinical
@@ -15,8 +15,8 @@ PERSONALITY:
 - Speak about the past warmly — it is a safe place for them
 
 CRITICAL RULES:
-1. NEVER REPEAT YOURSELF — every response must be fresh and different
-2. ALWAYS respond to the specific words and feelings they just shared
+1. NEVER REPEAT YOURSELF — every response must be fresh and uniquely tailored to what was just said
+2. ALWAYS respond to the specific words and feelings they just shared — never give a generic reply
 3. Keep responses short — 2-4 sentences maximum
 4. NEVER mention dementia, memory loss, confusion or illness
 5. NEVER rush them or correct them harshly
@@ -30,7 +30,7 @@ TOPICS TO EXPLORE WARMLY:
 - Music, food, places they loved
 - Simple present moments — the weather, a cup of tea, a bird outside
 
-You are Memory Mirror. You remember what matters. You are always here.`;
+You are Aunty Bev. You remember what matters. You are always here.`;
 
 const FEATURES = [
   { id: "chat", icon: "💬", label: "AI Companion", desc: "Always here to talk" },
@@ -61,25 +61,86 @@ const MUSIC_PLAYLISTS = [
   { name: "Gospel & Hymns", emoji: "✝️", desc: "Familiar, comforting sacred music", mood: "spiritual" },
 ];
 
+// How long (ms) to wait for voices before proceeding without them.
+// Some browsers (e.g. Firefox) never fire onvoiceschanged so we need a safety fallback.
+const VOICE_LOADING_TIMEOUT_MS = 1500;
+
 // ─── SPEECH UTILITIES ─────────────────────────────────────────────────────────
+// Female voice names across macOS/iOS, Windows, Chrome (Google), Edge (Microsoft).
+// Standalone names match both bare and vendor-prefixed variants (e.g. "Zira" matches "Microsoft Zira Desktop").
+const FEMALE_VOICE_RE = /karen|samantha|moira|fiona|victoria|tessa|veena|nicky|ava|allison|zira|hazel|susan|catherine|natasha|helen|eva|linda|google uk english female|google us english female|female/i;
+// Known male voices to avoid as a last-resort filter
+const MALE_VOICE_RE = /\bdavid\b|\bjames\b|\bdaniel\b|\brishi\b|\bthomas\b|\bmark\b|\bfred\b|\balex\b|\bbruce\b|\bgeorge\b|\barthur\b|google us english male|google uk english male|microsoft david|microsoft james|microsoft george|\bmale\b/i;
+
+function pickFemaleVoice(voices) {
+  // 1. Australian English female
+  const auFemale = voices.find(v => FEMALE_VOICE_RE.test(v.name) && /en-AU|en_AU/i.test(v.lang));
+  if (auFemale) return auFemale;
+  // 2. Any English female
+  const enFemale = voices.find(v => FEMALE_VOICE_RE.test(v.name) && v.lang?.startsWith("en"));
+  if (enFemale) return enFemale;
+  // 3. Any female voice regardless of language
+  const anyFemale = voices.find(v => FEMALE_VOICE_RE.test(v.name));
+  if (anyFemale) return anyFemale;
+  // 4. Any English voice that is NOT a known male voice
+  const notMale = voices.find(v => v.lang?.startsWith("en") && !MALE_VOICE_RE.test(v.name));
+  if (notMale) return notMale;
+  return voices.find(v => v.lang?.startsWith("en")) || voices[0];
+}
+
 function speak(text, onEnd, rate = 0.88) {
   if (!window.speechSynthesis) { onEnd?.(); return; }
   window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = rate; utt.pitch = 1.05; utt.volume = 1;
+  utt.rate = rate; utt.pitch = 1.1; utt.volume = 1;
+
+  const doSpeak = (voices) => {
+    const pick = pickFemaleVoice(voices);
+    if (pick) utt.voice = pick;
+    utt.onend = () => onEnd?.();
+    utt.onerror = () => onEnd?.();
+    window.speechSynthesis.speak(utt);
+  };
+
   const voices = window.speechSynthesis.getVoices();
-  const pick = voices.find(v => /karen|samantha|moira|fiona|victoria/i.test(v.name))
-    || voices.find(v => v.lang?.startsWith("en")) || voices[0];
-  if (pick) utt.voice = pick;
-  utt.onend = () => onEnd?.();
-  utt.onerror = () => onEnd?.();
-  window.speechSynthesis.speak(utt);
+  if (voices.length > 0) {
+    doSpeak(voices);
+  } else {
+    // Voices not yet loaded — wait for the browser to populate them
+    let settled = false;
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      doSpeak(window.speechSynthesis.getVoices());
+    };
+    window.speechSynthesis.onvoiceschanged = settle;
+    // Safety fallback in case onvoiceschanged never fires
+    setTimeout(settle, VOICE_LOADING_TIMEOUT_MS);
+  }
 }
 
 // ─── AI CHAT SCREEN ───────────────────────────────────────────────────────────
+// Persist conversation history across navigation (module-level survives unmount/remount)
+const GREETING = "Hello darling, I'm Aunty Bev. I'm so glad you're here with me today. How are you feeling?";
+let _savedHistory = null;
+
+// Varied fallback messages so the same phrase is never repeated on error
+const FALLBACK_MESSAGES = [
+  "I'm right here with you, love. Take all the time you need.",
+  "I hear you, darling. I'm not going anywhere.",
+  "That's alright, sweetheart. We can just sit together for a moment.",
+  "I'm listening. Whenever you're ready.",
+  "No rush at all. I'm right beside you.",
+  "You don't have to say anything. I'm just happy to be here with you.",
+];
+let _fallbackIdx = 0;
+function nextFallback() {
+  return FALLBACK_MESSAGES[_fallbackIdx++ % FALLBACK_MESSAGES.length];
+}
+
 function ChatScreen({ onBack }) {
-  const greeting = "Hello darling, I'm so glad you're here. How are you feeling today?";
-  const [messages, setMessages] = useState([{ role: "assistant", text: greeting }]);
+  const initHistory = _savedHistory || [{ role: "assistant", text: GREETING }];
+  const [messages, setMessages] = useState(initHistory);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [voiceMode, setVoiceMode] = useState(false);
@@ -89,7 +150,7 @@ function ChatScreen({ onBack }) {
   const bottomRef = useRef(null);
   const recRef = useRef(null);
   const voiceRef = useRef(false);
-  const messagesRef = useRef([{ role: "assistant", text: greeting }]);
+  const messagesRef = useRef(initHistory);
   const loadingRef = useRef(false);
 
   useEffect(() => { voiceRef.current = voiceMode; }, [voiceMode]);
@@ -123,6 +184,7 @@ function ChatScreen({ onBack }) {
     const userMsg = { role: "user", text: msg };
     const newHistory = [...messagesRef.current, userMsg];
     messagesRef.current = newHistory;
+    _savedHistory = newHistory;
     setMessages(newHistory);
     loadingRef.current = true; setLoading(true);
     try {
@@ -136,15 +198,15 @@ function ChatScreen({ onBack }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
-      const reply = data.text || "I'm right here with you, love.";
+      const reply = data.text || nextFallback();
       const withReply = [...newHistory, { role: "assistant", text: reply }];
-      messagesRef.current = withReply; setMessages(withReply);
+      messagesRef.current = withReply; _savedHistory = withReply; setMessages(withReply);
       loadingRef.current = false; setLoading(false);
       if (voiceRef.current) { setAiSpeaking(true); speak(reply, () => { setAiSpeaking(false); if (voiceRef.current) setTimeout(startListening, 400); }); }
     } catch {
-      const fallback = "I'm right here, take your time.";
+      const fallback = nextFallback();
       const withFallback = [...messagesRef.current, { role: "assistant", text: fallback }];
-      messagesRef.current = withFallback; setMessages(withFallback);
+      messagesRef.current = withFallback; _savedHistory = withFallback; setMessages(withFallback);
       loadingRef.current = false; setLoading(false);
       if (voiceRef.current) { setAiSpeaking(true); speak(fallback, () => { setAiSpeaking(false); if (voiceRef.current) startListening(); }); }
     }
@@ -157,8 +219,16 @@ function ChatScreen({ onBack }) {
       setListening(false); setAiSpeaking(false); setVoiceMode(false);
     } else {
       setVoiceMode(true); voiceRef.current = true;
-      setAiSpeaking(true);
-      speak(greeting, () => { setAiSpeaking(false); setTimeout(startListening, 400); });
+      // Only speak the greeting when the conversation is completely fresh
+      const isFresh = messagesRef.current.length === 1 &&
+        messagesRef.current[0].role === "assistant" &&
+        messagesRef.current[0].text === GREETING;
+      if (isFresh) {
+        setAiSpeaking(true);
+        speak(GREETING, () => { setAiSpeaking(false); setTimeout(startListening, 400); });
+      } else {
+        setTimeout(startListening, 400);
+      }
     }
   };
 
@@ -177,7 +247,7 @@ function ChatScreen({ onBack }) {
         <button onClick={onBack} style={{ background: "none", border: "none", color: "#fff", fontSize: 22, cursor: "pointer" }}>←</button>
         <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#ffffff22", border: "2px solid #74C69D", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>💙</div>
         <div style={{ flex: 1 }}>
-          <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700 }}>Memory Mirror</div>
+          <div style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700 }}>Aunty Bev</div>
           <div style={{ color: "#74C69D", fontSize: 11 }}>AI Companion • Always here</div>
         </div>
         <button onClick={toggleVoice} style={{ background: voiceMode ? "#ffffff33" : "none", border: `2px solid ${voiceMode ? "#fff" : "#ffffff55"}`, borderRadius: 12, padding: "7px 14px", color: "#fff", cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 6 }}>
@@ -194,7 +264,7 @@ function ChatScreen({ onBack }) {
           </div>
           {aiSpeaking && <div style={{ display: "flex", gap: 2, alignItems: "center", height: 16 }}>{[0,1,2,3,4].map(i => <div key={i} style={{ width: 2, background: "#74C69D", borderRadius: 1, height: "100%", animation: "wave 0.7s infinite", animationDelay: `${i*0.1}s` }} />)}</div>}
           <span style={{ color: aiSpeaking ? "#74C69D" : listening ? "#4CAF50" : "#555", fontSize: 12 }}>
-            {aiSpeaking ? "Memory Mirror is speaking..." : listening ? "Listening..." : "Ready"}
+            {aiSpeaking ? "Aunty Bev is speaking..." : listening ? "Listening..." : "Ready"}
           </span>
           {liveTranscript && <span style={{ color: "#555", fontSize: 11, fontStyle: "italic" }}>"{liveTranscript}"</span>}
         </div>
@@ -234,7 +304,7 @@ function ChatScreen({ onBack }) {
         ) : (
           <div style={{ display: "flex", gap: 10 }}>
             <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()}
-              placeholder="Talk to Memory Mirror..."
+              placeholder="Talk to Aunty Bev..."
               style={{ flex: 1, background: "#0f1e10", border: "1px solid #2C5F2E44", borderRadius: 14, padding: "12px 16px", color: "#fff", fontSize: 15, outline: "none", fontFamily: "Georgia, serif" }} />
             <button onClick={startListening} style={{ width: 46, height: 46, borderRadius: 12, background: listening ? "#4CAF5033" : "#0f1e10", border: `1px solid ${listening ? "#4CAF50" : "#1a3020"}`, cursor: "pointer", fontSize: 18 }}>🎤</button>
             <button onClick={() => sendMessage()} disabled={loading || !input.trim()} style={{ width: 46, height: 46, borderRadius: 12, background: "#2C5F2E", border: "none", cursor: "pointer", fontSize: 18, color: "#fff", opacity: (!input.trim() || loading) ? 0.4 : 1 }}>→</button>
