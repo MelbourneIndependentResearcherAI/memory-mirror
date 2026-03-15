@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Upload, Tag as TagIcon } from 'lucide-react';
-import { imageToBase64 } from '../utils/helpers';
+import { compressImage } from '../utils/helpers';
 import '../styles/MemoryModal.css';
 
 const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
@@ -13,6 +13,7 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
   });
   const [tagInput, setTagInput] = useState('');
   const [imagePreview, setImagePreview] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (editMemory) {
@@ -33,25 +34,30 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
     });
     setTagInput('');
     setImagePreview('');
+    setIsUploading(false);
   };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Limit to 5 MB to avoid filling localStorage (base64 adds ~33% overhead).
-      const MAX_SIZE_BYTES = 5 * 1024 * 1024;
+      // Limit to 10 MB before compression; compressImage will shrink the result.
+      const MAX_SIZE_BYTES = 10 * 1024 * 1024;
       if (file.size > MAX_SIZE_BYTES) {
-        alert('Image is too large. Please choose an image under 5 MB.');
+        alert('Image is too large. Please choose an image under 10 MB.');
         e.target.value = '';
         return;
       }
+      setIsUploading(true);
       try {
-        const base64 = await imageToBase64(file);
+        const base64 = await compressImage(file);
         setFormData(prev => ({ ...prev, image: base64 }));
         setImagePreview(base64);
       } catch (error) {
         console.error('Error uploading image:', error);
         alert('Failed to upload image');
+        e.target.value = '';
+      } finally {
+        setIsUploading(false);
       }
     }
   };
@@ -151,9 +157,9 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
                 onChange={handleImageUpload}
                 style={{ display: 'none' }}
               />
-              <label htmlFor="image" className="upload-button">
+              <label htmlFor="image" className={`upload-button${isUploading ? ' upload-button--loading' : ''}`}>
                 <Upload size={20} />
-                <span>Choose Photo</span>
+                <span>{isUploading ? 'Processing…' : 'Choose Photo'}</span>
               </label>
               {imagePreview && (
                 <div className="image-preview">
@@ -206,7 +212,7 @@ const MemoryModal = ({ isOpen, onClose, onSave, editMemory }) => {
             <button type="button" onClick={onClose} className="button-secondary">
               Cancel
             </button>
-            <button type="submit" className="button-primary">
+            <button type="submit" className="button-primary" disabled={isUploading}>
               {editMemory ? 'Update' : 'Save'} Memory
             </button>
           </div>
