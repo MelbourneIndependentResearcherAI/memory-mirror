@@ -40,6 +40,7 @@ jobs:
           app_location: "./memory-mirror"
           api_location: "memory-mirror/api"
           output_location: "dist"
+          skip_deploy_on_missing_secrets: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
