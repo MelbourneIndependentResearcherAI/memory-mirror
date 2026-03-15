@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const COMPANIONS = [
   {
@@ -125,11 +125,14 @@ function SessionScreen({ companion, onBack, onComplete }) {
   const bottomRef = useRef(null);
   const recRef = useRef(null);
   const voiceRef = useRef(false);
+  // Refs updated synchronously so voice callbacks always read current state without stale closures.
+  const messagesRef = useRef([{ role: "assistant", text: companion.greeting }]);
+  const loadingRef = useRef(false);
 
   useEffect(() => { voiceRef.current = voiceMode; }, [voiceMode]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  const startListening = useCallback(() => {
+  const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) return;
     try { recRef.current?.abort(); } catch {}
@@ -147,21 +150,31 @@ function SessionScreen({ companion, onBack, onComplete }) {
     rec.onend = () => setListening(false);
     recRef.current = rec;
     try { rec.start(); } catch {}
-  }, []);
+  };
 
   const sendMessage = async (text) => {
     const msg = (text || input).trim();
-    if (!msg || loading) return;
+    if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
     window.speechSynthesis?.cancel();
     const userMsg = { role: "user", text: msg };
-    const newHistory = [...messages, userMsg];
+    // Use ref for always-fresh history — avoids stale closures in voice callbacks.
+    const newHistory = [...messagesRef.current, userMsg];
+    messagesRef.current = newHistory;
     setMessages(newHistory);
+    loadingRef.current = true;
     setLoading(true);
 
     const stepContext = currentStep < STEPS.length
       ? `Current shower step: ${STEPS[currentStep].label} — ${STEPS[currentStep].desc}`
       : "Session complete — celebrate!";
+
+    // Build API-safe messages: skip leading assistant messages, ensure strict user/assistant alternation.
+    const apiMessages = newHistory.reduce((acc, m) => {
+      if (acc.length === 0 && m.role !== "user") return acc;
+      if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
+      return [...acc, { role: m.role, content: m.text }];
+    }, []);
 
     try {
       const res = await fetch("/api/chat", {
@@ -169,13 +182,16 @@ function SessionScreen({ companion, onBack, onComplete }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           systemPrompt: companion.systemPrompt + `\n\nCurrent step context: ${stepContext}\nTotal steps: 7. When a step is completed naturally move to encourage the next step.`,
-          messages: newHistory.map(m => ({ role: m.role, content: m.text })),
+          messages: apiMessages,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
       const reply = data.text || "You're doing so well. Keep going.";
-      setMessages(h => [...h, { role: "assistant", text: reply }]);
+      const withReply = [...newHistory, { role: "assistant", text: reply }];
+      messagesRef.current = withReply;
+      setMessages(withReply);
+      loadingRef.current = false;
       setLoading(false);
 
       // Auto advance step on positive responses
@@ -190,7 +206,10 @@ function SessionScreen({ companion, onBack, onComplete }) {
       }
     } catch {
       const fallback = "You're doing beautifully. Take your time.";
-      setMessages(h => [...h, { role: "assistant", text: fallback }]);
+      const withFallback = [...messagesRef.current, { role: "assistant", text: fallback }];
+      messagesRef.current = withFallback;
+      loadingRef.current = false;
+      setMessages(withFallback);
       setLoading(false);
       if (voiceRef.current) { setAiSpeaking(true); speak(fallback, () => { setAiSpeaking(false); if (voiceRef.current) startListening(); }); }
     }
@@ -216,7 +235,7 @@ function SessionScreen({ companion, onBack, onComplete }) {
       <p className="fresh-done-desc" style={{ color: "#ffffff99", fontSize: 20, maxWidth: 400, lineHeight: 1.8, marginBottom: 40 }}>Fresh, clean and wonderful. You did it — every single step. Something to be proud of.</p>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
         <button onClick={onComplete} style={{ background: "#fff", border: "none", borderRadius: 16, padding: "16px 36px", fontSize: 17, color: companion.color, cursor: "pointer", fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}>Back Home 🏠</button>
-        <button onClick={() => { setMessages([{ role: "assistant", text: companion.greeting }]); setCurrentStep(0); setSessionDone(false); }} style={{ background: "none", border: "2px solid #fff", borderRadius: 16, padding: "16px 36px", fontSize: 17, color: "#fff", cursor: "pointer" }}>New Session 🔄</button>
+        <button onClick={() => { const init = [{ role: "assistant", text: companion.greeting }]; messagesRef.current = init; loadingRef.current = false; setMessages(init); setCurrentStep(0); setSessionDone(false); }} style={{ background: "none", border: "2px solid #fff", borderRadius: 16, padding: "16px 36px", fontSize: 17, color: "#fff", cursor: "pointer" }}>New Session 🔄</button>
       </div>
     </div>
   );
