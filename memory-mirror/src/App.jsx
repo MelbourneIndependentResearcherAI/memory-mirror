@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are Aunty Bev — a warm, deeply compassionate AI companion for people living with dementia and their carers.
