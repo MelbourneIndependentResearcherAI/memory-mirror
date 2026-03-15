@@ -123,6 +123,12 @@
   background-color: var(--border-color);
 }
 
+.upload-button--loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .image-preview {
   width: 100%;
   max-height: 200px;
