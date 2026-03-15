@@ -1,19 +1,3 @@
-/**
- * Serverless function: POST /api/chat
- *
- * Server-side proxy for the Anthropic Claude API.
- * Keeps ANTHROPIC_API_KEY secret — never exposed to the browser.
- *
- * Body:
- *   systemPrompt — string, the companion's system prompt (max 3000 chars)
- *   messages     — Array<{ role: 'user'|'assistant', content: string }>
- *
- * Returns: { text: string }
- *
- * Required environment variable:
- *   ANTHROPIC_API_KEY — Anthropic secret key (server-side only, no VITE_ prefix)
- */
-
 import { app } from '@azure/functions';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
@@ -27,43 +11,70 @@ app.http('chat', {
   methods: ['POST'],
   authLevel: 'anonymous',
   handler: async (request, context) => {
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-      context.error('[chat] ANTHROPIC_API_KEY is not configured');
-      return { status: 500, jsonBody: { error: 'AI service is not configured.' } };
+      context.log.error('[chat] ANTHROPIC_API_KEY is not configured');
+      return new Response(
+        JSON.stringify({ error: 'AI service is not configured.' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
     let body;
     try {
       body = await request.json();
     } catch {
-      return { status: 400, jsonBody: { error: 'Invalid JSON body.' } };
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON body.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
     const { systemPrompt, messages } = body ?? {};
 
-    // Validate inputs
     if (typeof systemPrompt !== 'string' || !systemPrompt.trim()) {
-      return { status: 400, jsonBody: { error: 'systemPrompt is required.' } };
+      return new Response(
+        JSON.stringify({ error: 'systemPrompt is required.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
     if (systemPrompt.length > MAX_SYSTEM_PROMPT_LENGTH) {
-      return { status: 400, jsonBody: { error: 'systemPrompt is too long.' } };
+      return new Response(
+        JSON.stringify({ error: 'systemPrompt is too long.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
     if (!Array.isArray(messages) || messages.length === 0) {
-      return { status: 400, jsonBody: { error: 'messages must be a non-empty array.' } };
+      return new Response(
+        JSON.stringify({ error: 'messages must be a non-empty array.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
     if (messages.length > MAX_MESSAGES) {
-      return { status: 400, jsonBody: { error: `messages must not exceed ${MAX_MESSAGES} items.` } };
+      return new Response(
+        JSON.stringify({ error: `messages must not exceed ${MAX_MESSAGES} items.` }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
     for (const msg of messages) {
       if (!msg || !['user', 'assistant'].includes(msg.role)) {
-        return { status: 400, jsonBody: { error: 'Each message must have role "user" or "assistant".' } };
+        return new Response(
+          JSON.stringify({ error: 'Each message must have role "user" or "assistant".' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
       }
       if (typeof msg.content !== 'string') {
-        return { status: 400, jsonBody: { error: 'Each message must have a string content field.' } };
+        return new Response(
+          JSON.stringify({ error: 'Each message must have a string content field.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
       }
       if (msg.content.length > MAX_MESSAGE_LENGTH) {
-        return { status: 400, jsonBody: { error: 'A message content value exceeds the maximum length.' } };
+        return new Response(
+          JSON.stringify({ error: 'A message content value exceeds the maximum length.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
       }
     }
 
@@ -86,19 +97,32 @@ app.http('chat', {
       const data = await response.json();
 
       if (!response.ok) {
-        context.error('[chat] Anthropic API error:', data?.error?.message ?? response.status);
-        return { status: 502, jsonBody: { error: 'AI service returned an error. Please try again.' } };
+        context.log.error('[chat] Anthropic API error:', data?.error?.message ?? response.status);
+        return new Response(
+          JSON.stringify({ error: 'AI service returned an error. Please try again.' }),
+          { status: 502, headers: { 'Content-Type': 'application/json' } }
+        );
       }
 
       const text = data.content?.find((b) => b.type === 'text')?.text;
       if (!text) {
-        return { status: 502, jsonBody: { error: 'No text response from AI service.' } };
+        return new Response(
+          JSON.stringify({ error: 'No text response from AI service.' }),
+          { status: 502, headers: { 'Content-Type': 'application/json' } }
+        );
       }
 
-      return { status: 200, jsonBody: { text } };
+      return new Response(
+        JSON.stringify({ text }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+
     } catch (err) {
-      context.error('[chat] Request failed:', err.message);
-      return { status: 500, jsonBody: { error: 'Failed to reach AI service.' } };
+      context.log.error('[chat] Request failed:', err.message);
+      return new Response(
+        JSON.stringify({ error: 'Failed to reach AI service.' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
     }
-  },
+  }
 });
