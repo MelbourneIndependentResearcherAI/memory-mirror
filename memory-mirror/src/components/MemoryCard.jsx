@@ -8,7 +8,7 @@ const MemoryCard = ({ memory, onDelete, onEdit }) => {
     <div className="memory-card">
       {memory.image && (
         <div className="memory-image">
-          <img src={memory.image} alt={memory.title} />
+          <img src={memory.image} alt={memory.title} loading="lazy" />
         </div>
       )}
       
