@@ -18,8 +18,8 @@ jobs:
           node-version: '20'
 
       - name: Install and Build
+        working-directory: ./memory-mirror
         run: |
-          cd memory-mirror
           npm ci
           npm run build
 
@@ -29,6 +29,6 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MEMORY_MIRROR }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "memory-mirror" # The folder where the source is
-          output_location: "dist"      # The folder inside memory-mirror where the build went
-          skip_app_build: true         # Important since we ran npm run build manually
+          app_location: "memory-mirror" 
+          output_location: "dist"      
+          skip_app_build: true         
