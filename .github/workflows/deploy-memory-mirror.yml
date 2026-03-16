@@ -8,6 +8,7 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
+    name: Build and Deploy Job
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -28,5 +29,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MEMORY_MIRROR }}
           action: "upload"
+          # This points Azure to the correct folder containing your index.html
           app_location: "/memory-mirror"
           output_location: "dist"
