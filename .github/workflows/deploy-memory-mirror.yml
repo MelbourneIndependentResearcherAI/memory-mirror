@@ -8,22 +8,26 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
+    name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install and Build
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build
         working-directory: ./memory-mirror
         run: |
           npm ci
           npm run build
 
-      - name: Build And Deploy
+      - name: Deploy to Azure
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MEMORY_MIRROR }}
           action: "upload"
-          # This tells Azure that your app is inside the memory-mirror folder
           app_location: "memory-mirror"
-          # This tells Azure that the compiled HTML/JS is inside memory-mirror/dist
           output_location: "dist"
           skip_app_build: true
