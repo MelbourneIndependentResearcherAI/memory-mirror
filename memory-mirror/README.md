@@ -1,4 +1,4 @@
-# ✨ Memory Mirror
+# ✨ Memory Mirror 
 
 A beautiful, modern photo and memory timeline application built with React. Capture and relive your precious moments in an elegant interface.
 
