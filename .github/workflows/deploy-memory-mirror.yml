@@ -8,6 +8,7 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
+    name: Build and Deploy Job
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -17,10 +18,15 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install and Build
+      - name: Clean, Install, and Build
         run: |
+          # Go to the project directory
           cd memory-mirror
+          # Force remove any old build artifacts
+          rm -rf dist
+          # Clean install of dependencies
           npm install
+          # Generate fresh build
           npm run build
 
       - name: Deploy to Azure
@@ -28,6 +34,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MEMORY_MIRROR }}
           action: "upload"
-          # This tells Azure where your package.json and project files actually live
+          # Ensure this points to the exact folder
           app_location: "/memory-mirror"
           output_location: "dist"
