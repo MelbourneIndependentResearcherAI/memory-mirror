@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  // The dot-slash is critical; it ensures files are loaded relative to your index.html
+  // This tells Vite to use relative paths so the browser finds the files correctly
   base: './',
   build: {
     outDir: 'dist',
