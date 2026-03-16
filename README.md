@@ -1,4 +1,4 @@
-# Memory Mirror — Multi-App Repository
+# Memory Mirror — Multi-App Repository 
 
 This repository contains three React applications, each deployable to Azure App Service via GitHub Actions.
 
