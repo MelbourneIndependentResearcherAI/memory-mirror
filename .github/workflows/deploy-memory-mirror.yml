@@ -5,5 +5,5 @@
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "memory-mirror"    # Folder where package.json lives
-          output_location: "dist"         # Folder where npm run build puts its files
-          skip_app_build: true            # We built it in the previous step
+          output_location: "dist"          # Folder where your build files are
+          skip_app_build: true             # Because we run build in the step before
