@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // CRITICAL: This fixes the blank screen path issues
+  base: './', // This is crucial for relative paths
   build: {
     outDir: 'dist',
   }
