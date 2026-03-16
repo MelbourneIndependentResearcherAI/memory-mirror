@@ -8,6 +8,7 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
+    name: Build and Deploy Job
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -18,9 +19,8 @@ jobs:
           node-version: '20'
 
       - name: Install and Build
-        # This runs the build locally in the GitHub runner
         run: |
-          npm ci
+          npm install
           npm run build
 
       - name: Deploy to Azure
@@ -28,7 +28,7 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MEMORY_MIRROR }}
           action: "upload"
-          # This tells Azure to look in the 'dist' folder for your compiled files
-          app_location: "/"
+          # Ensure this points to the folder containing your package.json
+          app_location: "/memory-mirror"
           output_location: "dist"
           skip_app_build: true
