@@ -2,72 +2,33 @@ name: Deploy Memory Mirror to Azure Static Web Apps
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'memory-mirror/**'
-      - '.github/workflows/deploy-memory-mirror.yml'
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
-    paths:
-      - 'memory-mirror/**'
+    branches: [main]
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-          lfs: false
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: memory-mirror/package-lock.json
 
-      - name: Install dependencies and build
-        working-directory: ./memory-mirror
+      - name: Install and Build
         run: |
+          cd memory-mirror
           npm ci
           npm run build
 
       - name: Build And Deploy
-        id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MEMORY_MIRROR }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          # Points to the root of your project code
-          app_location: "memory-mirror" 
-          # Points to the API folder if you have one
-          api_location: "memory-mirror/api" 
-          # Points to the folder created by 'npm run build'
-          output_location: "dist" 
-          # Tells Azure we already ran the build in the previous step
-          skip_app_build: true 
-          skip_deploy_on_missing_secrets: true
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MEMORY_MIRROR }}
-          action: "close"
+          app_location: "memory-mirror" # The folder where the source is
+          output_location: "dist"      # The folder inside memory-mirror where the build went
+          skip_app_build: true         # Important since we ran npm run build manually
