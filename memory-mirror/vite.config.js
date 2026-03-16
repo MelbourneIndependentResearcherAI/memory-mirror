@@ -3,8 +3,13 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // <--- This forces files to be relative, fixing the blank screen
+  base: './',
   build: {
     outDir: 'dist',
-  }
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
 })
