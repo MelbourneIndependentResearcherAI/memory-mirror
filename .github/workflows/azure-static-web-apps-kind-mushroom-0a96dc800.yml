@@ -52,11 +52,11 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_MUSHROOM_0A96DC800 }}
           action: "upload"
 
-          # Next.js app
+          # Your Next.js app folder
           app_location: "memory-mirror"
           api_location: ""
 
-          # IMPORTANT: No output_location for Next.js
+          # IMPORTANT: No output_location for Next.js App Router
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
