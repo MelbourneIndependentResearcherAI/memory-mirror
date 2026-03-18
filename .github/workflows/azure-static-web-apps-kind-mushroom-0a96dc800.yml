@@ -15,13 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     permissions:
-       id-token: write
-       contents: read
+      id-token: write
+      contents: read
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and build
+        working-directory: memory-mirror-
+        run: |
+          npm ci || npm install
+          npm run build
 
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
@@ -30,10 +43,10 @@ jobs:
         uses: actions/github-script@v6
         id: idtoken
         with:
-           script: |
-               const coredemo = require('@actions/core')
-               return await coredemo.getIDToken()
-           result-encoding: string
+          script: |
+            const coredemo = require('@actions/core')
+            return await coredemo.getIDToken()
+          result-encoding: string
 
       - name: Build And Deploy
         id: builddeploy
@@ -41,12 +54,9 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_MUSHROOM_0A96DC800 }}
           action: "upload"
-
-          # FIXED PATHS BELOW
-          app_location: "memory-mirror-"        # <-- removed leading slash
-          api_location: ""                      # no API
-          output_location: "memory-mirror-/dist" # <-- correct build output folder
-
+          app_location: "memory-mirror-"
+          api_location: ""
+          output_location: "memory-mirror-/dist"
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
