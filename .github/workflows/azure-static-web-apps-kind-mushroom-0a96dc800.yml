@@ -54,7 +54,7 @@ jobs:
 
           app_location: "memory-mirror"
           api_location: ""
-          output_location: "memory-mirror/dist"
+          output_location: "memory-mirror/.next"
 
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
