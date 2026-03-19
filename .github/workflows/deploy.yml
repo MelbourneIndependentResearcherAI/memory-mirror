@@ -19,20 +19,16 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
+        working-directory: ./memory-mirror
         run: npm install
 
       - name: Build Next.js app
+        working-directory: ./memory-mirror
         run: npm run build
-
-      - name: Upload artifact for deployment
-        uses: actions/upload-artifact@v4
-        with:
-          name: nextjs-app
-          path: ./
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: "memory-mirror"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISH_PROFILE }}
-          package: .
+          package: "./memory-mirror"
