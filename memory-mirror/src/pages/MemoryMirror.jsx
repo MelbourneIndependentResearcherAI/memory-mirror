@@ -1,2 +1,3 @@
-import App from "../../memory-mirror/App";
-export default App;
+export default function MemoryMirror() {
+  return <div>Memory Mirror App Loaded</div>;
+}

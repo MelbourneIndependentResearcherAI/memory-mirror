@@ -1,2 +1,3 @@
-import App from "../../fresh-start-ai/App";
-export default App;
+export default function FreshStartAI() {
+  return <div>Fresh Start AI App Loaded</div>;
+}

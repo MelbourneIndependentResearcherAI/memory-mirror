@@ -1,2 +1,3 @@
-import App from "../../little-ones-ai/App";
-export default App;
+export default function LittleOnesAI() {
+  return <div>Little Ones AI App Loaded</div>;
+}

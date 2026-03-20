@@ -1,2 +1,3 @@
-import App from "../../carer-hire-ai/App";
-export default App;
+export default function CarerHireAI() {
+  return <div>CarerHire AI App Loaded</div>;
+}
