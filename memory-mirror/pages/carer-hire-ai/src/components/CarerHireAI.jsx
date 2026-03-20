@@ -131,34 +131,6 @@ CRITICAL CONVERSATION RULES:
   },
 ];
 
-// speak() — handles async voice loading on Chrome (getVoices() is empty until voiceschanged fires).
-function speak(text, onEnd) {
-  if (!window.speechSynthesis) { onEnd?.(); return; }
-  window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.9; utt.pitch = 1.05; utt.volume = 1;
-  utt.onend = () => onEnd?.();
-
-  const doSpeak = () => {
-    const voices = window.speechSynthesis.getVoices();
-    const pick = voices.find(v => /samantha|karen|moira|fiona|victoria/i.test(v.name))
-      || voices.find(v => v.lang.startsWith("en"))
-      || voices[0];
-    if (pick) utt.voice = pick;
-    window.speechSynthesis.speak(utt);
-  };
-
-  // Chrome loads voices asynchronously — wait for them if not yet available.
-  if (window.speechSynthesis.getVoices().length > 0) {
-    doSpeak();
-  } else {
-    window.speechSynthesis.addEventListener("voiceschanged", function onVoices() {
-      window.speechSynthesis.removeEventListener("voiceschanged", onVoices);
-      doSpeak();
-    });
-  }
-}
-
 // Delay (ms) between the AI finishing speaking and the mic restarting in hands-free mode.
 // Prevents the mic from immediately picking up the tail-end of the AI's speech synthesis.
 const VOICE_RESTART_DELAY_MS = 400;

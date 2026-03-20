@@ -1,3 +1,6 @@
+window.speechSynthesis.onvoiceschanged = () => {
+  selectedVoice = null;
+};
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const CARERS = [
@@ -130,45 +133,30 @@ CRITICAL CONVERSATION RULES:
   },
 ];
 
-function speak(text, onEnd) {
-  if (!window.speechSynthesis) { onEnd?.(); return; }
-  window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.9; utt.pitch = 1.05; utt.volume = 1;
-  const voices = window.speechSynthesis.getVoices();
-  const pick = voices.find(v => /samantha|karen|moira|fiona|victoria/i.test(v.name))
-    || voices.find(v => v.lang.startsWith("en"))
-    || voices[0];
-  if (pick) utt.voice = pick;
-  utt.onend = () => onEnd?.();
-  window.speechSynthesis.speak(utt);
+if (!voices || voices.length === 0) {
+  setTimeout(() => speak(text, onEnd), 150);
+  return;
 }
 
-function ChatInterface({ carer, onBack }) {
-  const [messages, setMessages] = useState([{ role: "assistant", text: carer.greeting }]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [voiceMode, setVoiceMode] = useState(false);
-  const [listening, setListening] = useState(false);
-  const [aiSpeaking, setAiSpeaking] = useState(false);
-  const [liveTranscript, setLiveTranscript] = useState("");
-  const bottomRef = useRef(null);
-  const recRef = useRef(null);
-  const voiceRef = useRef(false);
-  // KEY FIX: always-current messages ref so voice callbacks never use stale history
-  const messagesRef = useRef([{ role: "assistant", text: carer.greeting }]);
-  const loadingRef = useRef(false);
 
-  const updateMessages = (updater) => {
-    setMessages(prev => {
-      const next = typeof updater === "function" ? updater(prev) : updater;
-      messagesRef.current = next;
-      return next;
-    });
-  };
+  // Only cancel if something is actually speaking
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.voice = selectedVoice;
+  utt.rate = 0.9;
+  utt.pitch = 1.05;
+  utt.volume = 1;
+
+  utt.onend = () => onEnd?.();
+
+  window.speechSynthesis.speak(utt);
+
 
   useEffect(() => { voiceRef.current = voiceMode; }, [voiceMode]);
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  FuseEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -398,7 +386,7 @@ function ChatInterface({ carer, onBack }) {
       </div>
     </div>
   );
-}
+
 
 function CarerCard({ carer, onSelect, selected }) {
   const [hovered, setHovered] = useState(false);

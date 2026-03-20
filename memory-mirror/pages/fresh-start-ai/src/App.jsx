@@ -145,23 +145,41 @@ function pickVoiceForCompanion(voices, voiceProfile) {
   if (notMale) return notMale;
   return voices.find(v => v.lang?.startsWith("en")) || voices[0];
 }
+let selectedVoice = null;
 
-function speak(text, onEnd, voiceProfile) {
-  if (!window.speechSynthesis) { onEnd?.(); return; }
-  window.speechSynthesis.cancel();
-  const profile = voiceProfile ?? DEFAULT_VOICE_PROFILE;
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = profile.rate;
-  utt.pitch = profile.pitch;
-  utt.volume = 1;
+function speak(text, onEnd) {
+  const synth = window.speechSynthesis;
+  if (!synth) { onEnd?.(); return; }
 
-  const doSpeak = (voices) => {
-    const pick = pickVoiceForCompanion(voices, profile);
-    if (pick) utt.voice = pick;
+  // Stop any current speech
+  synth.cancel();
+
+  // Always wait for voices to load
+  const loadVoices = () => {
+    const voices = synth.getVoices();
+    if (!voices || voices.length === 0) {
+      setTimeout(loadVoices, 100);
+      return;
+    }
+
+    // Hard-lock to a female voice
+    selectedVoice =
+      voices.find(v => /female|samantha|karen|moira|fiona|victoria/i.test(v.name)) ||
+      voices.find(v => v.lang.startsWith("en")) ||
+      voices[0];
+
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.voice = selectedVoice;
+    utt.rate = 0.95;
+    utt.pitch = 1.05;
+    utt.volume = 1;
     utt.onend = () => onEnd?.();
-    utt.onerror = () => onEnd?.();
-    window.speechSynthesis.speak(utt);
+
+    synth.speak(utt);
   };
+
+  loadVoices();
+}
 
   const voices = window.speechSynthesis.getVoices();
   if (voices.length > 0) {
@@ -178,7 +196,6 @@ function speak(text, onEnd, voiceProfile) {
     // Safety fallback in case onvoiceschanged never fires (e.g. Firefox)
     setTimeout(settle, VOICE_LOADING_TIMEOUT_MS);
   }
-}
 
 function SessionScreen({ companion, onBack, onComplete }) {
   const [messages, setMessages] = useState([{ role: "assistant", text: companion.greeting }]);
