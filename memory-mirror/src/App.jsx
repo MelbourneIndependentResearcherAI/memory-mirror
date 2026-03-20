@@ -1,21 +1,21 @@
 import { Routes, Route } from "react-router-dom";
 
-// Home screen
-import Home from "../pages/Home";
+import Home from "./pages/Home";
 
-// Your existing pages
-import CarerHireAI from "../pages/carer-hire-ai/Home";
-import FreshStartAI from "../pages/fresh-start-ai/Home";
-import LittleOnesAI from "../pages/little-ones-ai/Home";
+import MemoryMirror from "./pages/MemoryMirror";
+import CarerHireAI from "./pages/CarerHireAI";
+import LittleOnesAI from "./pages/LittleOnesAI";
+import FreshStartAI from "./pages/FreshStartAI";
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
 
+      <Route path="/memory-mirror" element={<MemoryMirror />} />
       <Route path="/carer-hire-ai" element={<CarerHireAI />} />
-      <Route path="/fresh-start-ai" element={<FreshStartAI />} />
       <Route path="/little-ones-ai" element={<LittleOnesAI />} />
+      <Route path="/fresh-start-ai" element={<FreshStartAI />} />
     </Routes>
   );
 }
