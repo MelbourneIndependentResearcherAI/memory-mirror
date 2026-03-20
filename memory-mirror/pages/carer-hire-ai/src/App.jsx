@@ -12,10 +12,8 @@ import FreshStartAI from "./apps/fresh-start-ai";
 export default function App() {
   return (
     <Routes>
-      {/* Home */}
       <Route path="/" element={<Home />} />
 
-      {/* Apps */}
       <Route path="/memory-mirror" element={<MemoryMirror />} />
       <Route path="/carer-hire-ai" element={<CarerHireAI />} />
       <Route path="/little-ones-ai" element={<LittleOnesAI />} />
