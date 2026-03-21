@@ -1,6 +1,44 @@
 {
+  "routes": [
+    {
+      "route": "/",
+      "serve": "/index.html"
+    },
+    {
+      "route": "/memory-mirror",
+      "serve": "/memory-mirror/index.html"
+    },
+    {
+      "route": "/memory-mirror/*",
+      "serve": "/memory-mirror/index.html"
+    },
+    {
+      "route": "/carerhire",
+      "serve": "/memory-mirror/pages/carer-hire-ai/index.html"
+    },
+    {
+      "route": "/carerhire/*",
+      "serve": "/memory-mirror/pages/carer-hire-ai/index.html"
+    },
+    {
+      "route": "/freshstart",
+      "serve": "/memory-mirror/pages/fresh-start-ai/index.html"
+    },
+    {
+      "route": "/freshstart/*",
+      "serve": "/memory-mirror/pages/fresh-start-ai/index.html"
+    },
+    {
+      "route": "/littleones",
+      "serve": "/memory-mirror/pages/little-ones-ai/index.html"
+    },
+    {
+      "route": "/littleones/*",
+      "serve": "/memory-mirror/pages/little-ones-ai/index.html"
+    }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*"]
+    "exclude": ["/api/*"]
   }
 }
