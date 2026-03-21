@@ -50,7 +50,7 @@ jobs:
           api_location: ""
 
           # ⭐ Correct Vite build output folder
-          output_location: "memory-mirror/dist"
+          output_location: "dist"
 
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
