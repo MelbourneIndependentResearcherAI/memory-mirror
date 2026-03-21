@@ -136,7 +136,7 @@ function useVoiceChat({ systemPrompt, greeting, voiceId }) {
         body: JSON.stringify({
           
           
-          
+          systemPrompt: systemPrompt,
           messages: newHistory.map(m => ({ role: m.role, content: m.text })),
         }),
       });
