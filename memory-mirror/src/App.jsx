@@ -130,18 +130,18 @@ function useVoiceChat({ systemPrompt, greeting, voiceId }) {
     setMessages([...newHistory]);
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          system: systemPrompt,
+          
+          
+          
           messages: newHistory.map(m => ({ role: m.role, content: m.text })),
         }),
       });
       const data  = await res.json();
-      const reply = data.content?.find(b => b.type === "text")?.text
+      const reply = data.text
         || "I'm right here with you.";
 
       const withReply = [...newHistory, { role: "assistant", text: reply }];
