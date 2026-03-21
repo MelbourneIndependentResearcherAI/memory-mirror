@@ -1,5 +1,9 @@
 {
   "name": "memory-mirror-monorepo",
   "private": true,
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd memory-mirror && npm install && npm run build",
+    "start": "cd memory-mirror && npm run dev"
+  }
 }
