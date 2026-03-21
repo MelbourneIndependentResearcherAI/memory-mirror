@@ -47,7 +47,7 @@ jobs:
           app_location: "memory-mirror"
 
           # ⭐ No API
-          api_location: ""
+          api_location: "memory-mirror/api"
 
           # ⭐ Correct Vite build output folder
           output_location: "dist"
