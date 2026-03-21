@@ -1,19 +1,13 @@
-import { Routes, Route } from "react-router-dom";
-
-import Home from "./pages/Home";
-import MemoryMirror from "./pages/MemoryMirror";
-import CarerHireAI from "./pages/CarerHireAI";
-import LittleOnesAI from "./pages/LittleOnesAI";
-import FreshStartAI from "./pages/FreshStartAI";
-
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/memory-mirror" element={<MemoryMirror />} />
-      <Route path="/carer-hire-ai" element={<CarerHireAI />} />
-      <Route path="/little-ones-ai" element={<LittleOnesAI />} />
-      <Route path="/fresh-start-ai" element={<FreshStartAI />} />
-    </Routes>
+    <div style={{ padding: "40px", fontFamily: "sans-serif", color: "white" }}>
+      <h1>Unified Platform</h1>
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        <li><a href="/memory-mirror" style={{ color: "#4da6ff" }}>Memory Mirror</a></li>
+        <li><a href="/carerhire" style={{ color: "#4da6ff" }}>CarerHire AI</a></li>
+        <li><a href="/littleones" style={{ color: "#4da6ff" }}>Little Ones AI</a></li>
+        <li><a href="/freshstart" style={{ color: "#4da6ff" }}>Fresh Start AI</a></li>
+      </ul>
+    </div>
   );
 }
