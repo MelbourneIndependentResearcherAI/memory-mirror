@@ -47,3 +47,12 @@ if (crisisMode) {
   aiResponse = crisisCalm(aiResponse);
   aiResponse = orientationCue() + ' ' + aiResponse;
 }
+import { handleMemoryLoop } from './memoryLoop';
+
+const loopResponse = handleMemoryLoop(userMessage);
+if (loopResponse) {
+  const finalText = applyPersonality(loopResponse, currentDementiaProfile);
+  speak(finalText);
+  setMessages(prev => [...prev, { from: 'ai', text: finalText }]);
+  return;
+}
