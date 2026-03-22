@@ -35,3 +35,15 @@ export default function App() {
     </div>
   );
 }
+import { crisisCalm, orientationCue } from './crisisCalm';
+
+const [crisisMode, setCrisisMode] = useState(false);
+
+<button onClick={() => setCrisisMode(!crisisMode)}>
+  {crisisMode ? 'Disable Crisis-Calm Mode' : 'Enable Crisis-Calm Mode'}
+</button>
+
+if (crisisMode) {
+  aiResponse = crisisCalm(aiResponse);
+  aiResponse = orientationCue() + ' ' + aiResponse;
+}
