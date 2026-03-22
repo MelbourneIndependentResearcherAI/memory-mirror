@@ -181,7 +181,7 @@ function speak(text, onEnd) {
   loadVoices();
 }
 
-  }
+  
 
 function SessionScreen({ companion, onBack, onComplete }) {
   const [messages, setMessages] = useState([{ role: "assistant", text: companion.greeting }]);
