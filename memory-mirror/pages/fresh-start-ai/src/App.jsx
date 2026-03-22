@@ -701,3 +701,57 @@ export async function speak(text) {
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
 }
+import VoiceToggle from './VoiceToggle';
+
+{/* Voice Toggle UI */}
+<VoiceToggle />
+"
+git add .
+git commit -m "Add UI voice toggle + preview + persistent preference"
+git push
+git add .
+git commit -m "Add UI voice toggle + preview + persistent preference"
+git push
+git add .
+git commit -m "Add UI voice toggle + preview + persistent preference"
+git push
+Set-Content -Path "memory-mirror/pages/fresh-start-ai/src/personality.js" -Value @"
+export const dementiaProfiles = {
+  general: {
+    tone: "warm, slow, gentle, reassuring",
+    style: "short sentences, simple language, calm pacing",
+    behaviour: "offer reassurance, reduce confusion, avoid overload"
+  },
+
+  alzheimers: {
+    tone: "soft, patient, comforting",
+    style: "repeat gently, avoid complex instructions",
+    behaviour: "focus on present moment, reduce anxiety"
+  },
+
+  vascular: {
+    tone: "steady, structured, supportive",
+    style: "clear steps, avoid rapid topic changes",
+    behaviour: "help maintain focus, reduce frustration"
+  },
+
+  lewyBody: {
+    tone: "calm, grounding, steady",
+    style: "avoid sudden changes, speak predictably",
+    behaviour: "reduce sensory confusion, offer orientation cues"
+  },
+
+  frontotemporal: {
+    tone: "neutral, respectful, consistent",
+    style: "avoid emotional overload, keep language simple",
+    behaviour: "support communication without pressure"
+  }
+};
+
+export function applyPersonality(text, profile = "general") {
+  const p = dementiaProfiles[profile] || dementiaProfiles.general;
+
+  return \(\) \\;
+}
+import { applyPersonality } from './personality';
+import DementiaSelector from './DementiaSelector';
