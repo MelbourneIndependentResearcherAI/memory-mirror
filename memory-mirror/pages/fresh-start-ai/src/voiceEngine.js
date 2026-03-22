@@ -1,11 +1,13 @@
 let isSpeaking = false;
 let selectedVoice = null;
 let voiceReady = false;
-let voiceProfile = "female"; // female or male
+
+// female (default) or male
+let voiceProfile = "female";
 
 export function setVoiceProfile(profile) {
   voiceProfile = profile;
-  voiceReady = false; // force reload
+  voiceReady = false; // force reload next time speak() is called
 }
 
 export function initVoice() {
@@ -45,7 +47,9 @@ export async function speak(text) {
   utter.rate = 0.95;
   utter.pitch = 1.05;
 
-  utter.onend = () => { isSpeaking = false; };
+  utter.onend = () => {
+    isSpeaking = false;
+  };
 
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utter);
