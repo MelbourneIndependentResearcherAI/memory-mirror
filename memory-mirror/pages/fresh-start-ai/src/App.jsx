@@ -181,20 +181,6 @@ function speak(text, onEnd) {
   loadVoices();
 }
 
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length > 0) {
-    doSpeak(voices);
-  } else {
-    // Voices not yet loaded — wait for the browser to populate them
-    let settled = false;
-    const settle = () => {
-      if (settled) return;
-      settled = true;
-      doSpeak(window.speechSynthesis.getVoices());
-    };
-    window.speechSynthesis.onvoiceschanged = settle;
-    // Safety fallback in case onvoiceschanged never fires (e.g. Firefox)
-    setTimeout(settle, VOICE_LOADING_TIMEOUT_MS);
   }
 
 function SessionScreen({ companion, onBack, onComplete }) {
@@ -667,4 +653,51 @@ export default function FreshStartAI() {
       </div>
     </div>
   );
+}
+import { initVoice, speak } from './voiceEngine';
+import { initMic, startMic } from './micEngine';
+useEffect(() => {
+  initVoice();
+  initMic(handleUserSpeech);
+  startMic();
+}, []);
+// --- FIXED TTS ENGINE BELOW ---
+let isSpeaking = false;
+
+function loadVoices() {
+  return new Promise(resolve => {
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      resolve(voices);
+      return;
+    }
+    window.speechSynthesis.onvoiceschanged = () => {
+      resolve(window.speechSynthesis.getVoices());
+    };
+  });
+}
+
+export async function speak(text) {
+  if (isSpeaking) return;
+  isSpeaking = true;
+
+  const voices = await loadVoices();
+
+  const femaleVoice =
+    voices.find(v => /female|samantha|karen|moira|fiona|victoria/i.test(v.name)) ||
+    voices.find(v => v.lang.startsWith('en')) ||
+    voices[0];
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.voice = femaleVoice;
+  utterance.rate = 0.95;
+  utterance.pitch = 1.05;
+  utterance.volume = 1;
+
+  utterance.onend = () => {
+    isSpeaking = false;
+  };
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
 }
