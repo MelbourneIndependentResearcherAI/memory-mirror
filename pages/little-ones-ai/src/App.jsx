@@ -1,24 +1,61 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// ─── VOICE CONSTANTS ──────────────────────────────────────────────────────────
-// How long (ms) to wait for voices before proceeding without them.
-// Some browsers (e.g. Firefox) never fire onvoiceschanged so we need a safety fallback.
-const VOICE_LOADING_TIMEOUT_MS = 1500;
+// ─── ELEVENLABS VOICE CONFIG ────────────────────────────────────────────────
+const ELEVEN_VOICE_ID = "<YOUR_ELEVENLABS_VOICE_ID>"; // ← replace with your real voice ID
 
-// Female voice names across macOS/iOS, Windows, Chrome (Google), Edge (Microsoft).
-const FEMALE_VOICE_RE = /karen|samantha|moira|fiona|victoria|tessa|veena|nicky|ava|allison|zira|hazel|susan|catherine|natasha|helen|eva|linda|google uk english female|google us english female|female/i;
-// Known male voices to avoid as a last-resort filter
-const MALE_VOICE_RE = /\bdavid\b|\bjames\b|\bdaniel\b|\brishi\b|\bthomas\b|\bmark\b|\bfred\b|\balex\b|\bbruce\b|\bgeorge\b|\barthur\b|google us english male|google uk english male|microsoft david|microsoft james|microsoft george|\bmale\b/i;
+async function speakWithElevenLabs(text, onEnd) {
+  try {
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVEN_VOICE_ID}`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": import.meta.env.VITE_ELEVENLABS_API_KEY,
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: "eleven_turbo_v2",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.8,
+          },
+        }),
+      }
+    );
 
-// voiceProfile shape: { nameRE, langRE, rate, pitch }
-// Each grandchild has a distinct profile so TTS voices feel different.
+    if (!response.ok) {
+      throw new Error(`ElevenLabs error: ${response.status}`);
+    }
 
+    const audioData = await response.arrayBuffer();
+    const blob = new Blob([audioData], { type: "audio/mpeg" });
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+
+    audio.onended = () => {
+      URL.revokeObjectURL(url);
+      onEnd?.();
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(url);
+      onEnd?.();
+    };
+
+    audio.play();
+  } catch (err) {
+    console.error("ElevenLabs TTS error:", err);
+    onEnd?.();
+  }
+}
+
+// ─── GRANDCHILDREN CONFIG ───────────────────────────────────────────────────
 const GRANDCHILDREN = [
   {
     id: 1, emoji: "🌟", name: "Lily", gender: "Girl", age: 7,
     color: "#E91E8C", color2: "#C2185B", accent: "#F48FB1",
     voice: "Bright, breathless, talks fast, gets excited about everything",
-    // Fastest rate + highest pitch → excited little girl
     voiceProfile: { nameRE: /samantha|karen|ava|allison|nicky/i, langRE: /en-AU|en_AU/i, rate: 1.12, pitch: 1.45 },
     greeting: "NANNY!! Oh my gosh you're here!! I've been thinking about you SO much — I have like a million things to ask you, okay, are you ready??",
     systemPrompt: `You are Lily, a 7-year-old girl visiting your beloved Nanny or Poppy who lives with dementia.
@@ -41,7 +78,6 @@ CRITICAL RULES — READ EVERY TIME:
     id: 2, emoji: "🦋", name: "Sophie", gender: "Girl", age: 11,
     color: "#9C27B0", color2: "#7B1FA2", accent: "#CE93D8",
     voice: "Warm, thoughtful, soft — she truly listens and remembers everything",
-    // Slightly slower, medium pitch → thoughtful, warm older girl
     voiceProfile: { nameRE: /samantha|karen|ava|moira|fiona/i, langRE: /en-AU|en_AU/i, rate: 0.92, pitch: 1.25 },
     greeting: "Hi Nanny... I'm so glad you're here. I was actually thinking about something you told me last time and I really wanted to talk to you about it. Is that okay?",
     systemPrompt: `You are Sophie, an 11-year-old thoughtful girl visiting your beloved Nanny or Poppy who lives with dementia.
@@ -63,7 +99,6 @@ CRITICAL RULES:
     id: 3, emoji: "⚽", name: "Matty", gender: "Boy", age: 8,
     color: "#1565C0", color2: "#0D47A1", accent: "#90CAF9",
     voice: "Energetic, cheeky, sporty — always needs Poppy's advice urgently",
-    // Fast rate, moderate-high pitch → energetic boy
     voiceProfile: { nameRE: /karen|samantha|tessa|nicky|victoria/i, langRE: /en-AU|en_AU/i, rate: 1.08, pitch: 1.30 },
     greeting: "Poppy!! You are literally the only person who can help me right now — I've been waiting all day to talk to you. You ready? Okay so...",
     systemPrompt: `You are Matty, an 8-year-old boy visiting your beloved Poppy or Nanny who lives with dementia.
@@ -85,7 +120,6 @@ CRITICAL RULES:
     id: 4, emoji: "🎨", name: "Jasper", gender: "Boy", age: 12,
     color: "#00695C", color2: "#004D40", accent: "#80CBC4",
     voice: "Curious, thoughtful, asks the big questions nobody else asks",
-    // Measured rate, slightly lower pitch than the girls → deeper, thoughtful older boy
     voiceProfile: { nameRE: /samantha|karen|ava|allison/i, langRE: /en-AU|en_AU/i, rate: 0.95, pitch: 1.10 },
     greeting: "Hey Poppy. I've been thinking... you know so much stuff that nobody else knows. Like actually important stuff. Can I ask you something that's been on my mind?",
     systemPrompt: `You are Jasper, a 12-year-old boy visiting your beloved Poppy or Nanny who lives with dementia.
@@ -107,7 +141,6 @@ CRITICAL RULES:
     id: 5, emoji: "🌈", name: "Zara", gender: "Girl", age: 9,
     color: "#E65100", color2: "#BF360C", accent: "#FFAB91",
     voice: "Playful, funny, warm — Indigenous Australian culture woven naturally in",
-    // Warm and playful — moderate-fast rate, high-ish pitch
     voiceProfile: { nameRE: /samantha|karen|moira|fiona|tessa/i, langRE: /en-AU|en_AU/i, rate: 1.05, pitch: 1.35 },
     greeting: "Nanny!! I told Mum I was coming to see you and she said to ask you something really important — but first I just want to hear your voice. How are you?",
     systemPrompt: `You are Zara, a 9-year-old Aboriginal Australian girl visiting your beloved Nanny or Poppy who lives with dementia.
@@ -129,7 +162,6 @@ CRITICAL RULES:
     id: 6, emoji: "🎵", name: "Mia", gender: "Girl", age: 10,
     color: "#AD1457", color2: "#880E4F", accent: "#F48FB1",
     voice: "Musical, imaginative, dreamy — always has a song in her heart",
-    // Slower dreamy rate, lyrical pitch
     voiceProfile: { nameRE: /samantha|karen|ava|allison|moira/i, langRE: /en-AU|en_AU/i, rate: 0.88, pitch: 1.30 },
     greeting: "Nanny... I have a question that only you can answer. You know songs that nobody else in the whole world knows anymore. Can you teach me one? Please?",
     systemPrompt: `You are Mia, a 10-year-old musical girl visiting your beloved Nanny or Poppy who lives with dementia.
@@ -149,67 +181,6 @@ CRITICAL RULES:
   },
 ];
 
-// ── Voice helpers ─────────────────────────────────────────────
-// Pick the best available voice for a grandchild's voice profile.
-// Falls back gracefully through multiple tiers so every browser/OS works.
-function pickVoiceForProfile(voices, voiceProfile) {
-  const { nameRE, langRE } = voiceProfile;
-  // 1. Preferred name in preferred language
-  const inLang = voices.find(v => nameRE.test(v.name) && langRE.test(v.lang));
-  if (inLang) return inLang;
-  // 2. Preferred name in any language
-  const anyLang = voices.find(v => nameRE.test(v.name));
-  if (anyLang) return anyLang;
-  // 3. Any female English voice
-  const female = voices.find(v => FEMALE_VOICE_RE.test(v.name) && v.lang?.startsWith("en"));
-  if (female) return female;
-  // 4. Any English voice that isn't a known male voice
-  const notMale = voices.find(v => v.lang?.startsWith("en") && !MALE_VOICE_RE.test(v.name));
-  if (notMale) return notMale;
-  return voices.find(v => v.lang?.startsWith("en")) || voices[0];
-}
-
-function speak(text, onEnd, voiceProfile) {
-  if (!window.speechSynthesis) { onEnd?.(); return; }
-  window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = voiceProfile?.rate ?? 1.05;
-  utt.pitch = voiceProfile?.pitch ?? 1.30;
-  utt.volume = 1;
-
-  const doSpeak = (voices) => {
-    if (voiceProfile) {
-      const pick = pickVoiceForProfile(voices, voiceProfile);
-      if (pick) utt.voice = pick;
-    } else {
-      // Fallback: any female English voice
-      const pick = voices.find(v => FEMALE_VOICE_RE.test(v.name) && v.lang?.startsWith("en"))
-        || voices.find(v => v.lang?.startsWith("en"))
-        || voices[0];
-      if (pick) utt.voice = pick;
-    }
-    utt.onend = () => onEnd?.();
-    utt.onerror = () => onEnd?.();
-    window.speechSynthesis.speak(utt);
-  };
-
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length > 0) {
-    doSpeak(voices);
-  } else {
-    // Voices not yet loaded — wait for the browser to populate them
-    let settled = false;
-    const settle = () => {
-      if (settled) return;
-      settled = true;
-      doSpeak(window.speechSynthesis.getVoices());
-    };
-    window.speechSynthesis.onvoiceschanged = settle;
-    // Safety fallback in case onvoiceschanged never fires (e.g. Firefox)
-    setTimeout(settle, VOICE_LOADING_TIMEOUT_MS);
-  }
-}
-
 // ── Chat Interface ────────────────────────────────────────────
 function ChatInterface({ gc, onBack }) {
   const [messages, setMessages] = useState([{ role: "assistant", text: gc.greeting }]);
@@ -222,7 +193,6 @@ function ChatInterface({ gc, onBack }) {
   const bottomRef = useRef(null);
   const recRef = useRef(null);
   const voiceRef = useRef(false);
-  // KEY FIX: always-current messages ref so voice callbacks never use stale history
   const messagesRef = useRef([{ role: "assistant", text: gc.greeting }]);
   const loadingRef = useRef(false);
 
@@ -234,7 +204,6 @@ function ChatInterface({ gc, onBack }) {
     const msg = (text || input).trim();
     if (!msg || loadingRef.current) return;
     setInput(""); setListening(false); setLiveTranscript("");
-    window.speechSynthesis?.cancel();
 
     const userMsg = { role: "user", text: msg };
     const newHistory = [...messagesRef.current, userMsg];
@@ -243,7 +212,6 @@ function ChatInterface({ gc, onBack }) {
     loadingRef.current = true;
     setLoading(true);
 
-    // Build API-safe messages: skip leading assistant messages, ensure strict alternation
     const apiMessages = newHistory.reduce((acc, m) => {
       if (acc.length === 0 && m.role !== "user") return acc;
       if (acc.length > 0 && acc[acc.length - 1].role === m.role) return acc;
@@ -257,7 +225,6 @@ function ChatInterface({ gc, onBack }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           systemPrompt: gc.systemPrompt,
-          // Send full conversation history so AI never repeats itself
           messages: apiMessages,
         }),
       });
@@ -272,10 +239,10 @@ function ChatInterface({ gc, onBack }) {
 
       if (voiceRef.current) {
         setAiSpeaking(true);
-        speak(reply, () => {
+        speakWithElevenLabs(reply, () => {
           setAiSpeaking(false);
           if (voiceRef.current) setTimeout(() => startListening(), 500);
-        }, gc.voiceProfile);
+        });
       }
     } catch {
       const fallback = "Nanny wait — I want to hear more about that!";
@@ -286,7 +253,10 @@ function ChatInterface({ gc, onBack }) {
       setLoading(false);
       if (voiceRef.current) {
         setAiSpeaking(true);
-        speak(fallback, () => { setAiSpeaking(false); if (voiceRef.current) startListening(); }, gc.voiceProfile);
+        speakWithElevenLabs(fallback, () => {
+          setAiSpeaking(false);
+          if (voiceRef.current) startListening();
+        });
       }
     }
   };
@@ -317,20 +287,20 @@ function ChatInterface({ gc, onBack }) {
 
   const toggleVoice = () => {
     if (voiceMode) {
-      window.speechSynthesis?.cancel();
       try { recRef.current?.abort(); } catch {}
       setListening(false); setAiSpeaking(false); setLiveTranscript("");
       setVoiceMode(false); voiceRef.current = false;
     } else {
       setVoiceMode(true); voiceRef.current = true;
-      // Speak the greeting aloud first so the conversation starts naturally,
-      // then start listening once the grandchild has finished speaking.
       const isFresh = messagesRef.current.length === 1 &&
         messagesRef.current[0].role === "assistant" &&
         messagesRef.current[0].text === gc.greeting;
       if (isFresh) {
         setAiSpeaking(true);
-        speak(gc.greeting, () => { setAiSpeaking(false); setTimeout(() => startListening(), 400); }, gc.voiceProfile);
+        speakWithElevenLabs(gc.greeting, () => {
+          setAiSpeaking(false);
+          setTimeout(() => startListening(), 400);
+        });
       } else {
         setTimeout(() => startListening(), 400);
       }
