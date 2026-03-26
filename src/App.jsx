@@ -1,46 +1,37 @@
 import { useState } from "react";
 import "./styles/App.css";
 
-// Adult carers UI
+// Import the four apps
+import MemoryMirror from "./pages/MemoryMirror";
 import CarerHireAI from "./pages/CarerHireAI";
 import FreshStartAI from "./pages/FreshStartAI";
-
-// Little Ones AI (grandchildren)
 import LittleOnesAI from "../pages/little-ones-ai/src/App.jsx";
 
 export default function App() {
   const [view, setView] = useState("home");
   const [voiceKey, setVoiceKey] = useState("");
 
-  if (view === "companions") {
-    return (
-      <CarerHireAI
-        voiceKey={voiceKey}
-        onBack={() => setView("home")}
-      />
-    );
+  // Render each app full-screen
+  if (view === "memory") {
+    return <MemoryMirror voiceKey={voiceKey} onBack={() => setView("home")} />;
   }
 
-  if (view === "fresh-start") {
-    return (
-      <FreshStartAI
-        voiceKey={voiceKey}
-        onBack={() => setView("home")}
-      />
-    );
+  if (view === "carer") {
+    return <CarerHireAI voiceKey={voiceKey} onBack={() => setView("home")} />;
   }
 
-  if (view === "little-ones") {
-    return (
-      <LittleOnesAI
-        voiceKey={voiceKey}
-        onBack={() => setView("home")}
-      />
-    );
+  if (view === "fresh") {
+    return <FreshStartAI voiceKey={voiceKey} onBack={() => setView("home")} />;
   }
 
+  if (view === "little") {
+    return <LittleOnesAI voiceKey={voiceKey} onBack={() => setView("home")} />;
+  }
+
+  // Home screen — 2×2 grid
   return (
     <div className="app-container">
+
       <header className="header">
         <h1>Memory Mirror</h1>
         <p>Your AI companions for support, comfort, and connection.</p>
@@ -56,36 +47,26 @@ export default function App() {
         />
       </div>
 
-      <div className="tile-grid">
+      <div className="grid-2x2">
 
-        {/* Adult AI Companions */}
-        <div
-          className="tile"
-          onClick={() => setView("companions")}
-        >
-          <span style={{ fontSize: "3rem" }}>🧑‍⚕️</span>
-          <h2>AI Companions</h2>
-          <p>Supportive carers trained for dementia-friendly communication.</p>
+        <div className="tile" onClick={() => setView("memory")}>
+          <span className="emoji">🧠</span>
+          <h2>Memory Mirror</h2>
         </div>
 
-        {/* Fresh Start AI */}
-        <div
-          className="tile"
-          onClick={() => setView("fresh-start")}
-        >
-          <span style={{ fontSize: "3rem" }}>🌅</span>
+        <div className="tile" onClick={() => setView("carer")}>
+          <span className="emoji">🧑‍⚕️</span>
+          <h2>CarerHire AI</h2>
+        </div>
+
+        <div className="tile" onClick={() => setView("fresh")}>
+          <span className="emoji">🌅</span>
           <h2>Fresh Start AI</h2>
-          <p>Gentle resets and grounding for moments of confusion.</p>
         </div>
 
-        {/* Little Ones AI — Grandchildren */}
-        <div
-          className="tile"
-          onClick={() => setView("little-ones")}
-        >
-          <span style={{ fontSize: "3rem" }}>👧</span>
+        <div className="tile" onClick={() => setView("little")}>
+          <span className="emoji">👧</span>
           <h2>Little Ones AI</h2>
-          <p>Grandchildren-style voices and interactions.</p>
         </div>
 
       </div>
