@@ -1,106 +1,91 @@
-/* Background gradient */
-.premium-container {
-  min-height: 100vh;
-  padding: 30px;
-  background: linear-gradient(135deg, #dbeafe, #eff6ff, #ffffff);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: "Inter", sans-serif;
-}
+/* DIALPAD — Memory Lane Blue Premium */
 
-/* Header */
-.premium-header {
+.dialpad-container {
+  padding: 20px;
+  max-width: 420px;
+  margin: 0 auto;
   text-align: center;
-  margin-bottom: 20px;
 }
 
-.premium-header h1 {
-  font-size: 2.4rem;
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #1e3a8a;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.dialpad-title {
+  font-size: 2rem;
   font-weight: 700;
   color: #1e3a8a;
 }
 
-.premium-header p {
-  font-size: 1.1rem;
+.dialpad-sub {
   color: #475569;
+  margin-bottom: 20px;
 }
 
-/* Settings box */
-.premium-settings {
-  width: 100%;
-  max-width: 420px;
-  background: #ffffffaa;
-  backdrop-filter: blur(10px);
+.dialpad-display {
+  background: #ffffffdd;
+  backdrop-filter: blur(6px);
   padding: 16px;
-  border-radius: 16px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
-}
-
-.premium-settings label {
-  font-size: 0.9rem;
+  border-radius: 14px;
+  font-size: 1.6rem;
   color: #1e3a8a;
-  font-weight: 600;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(30, 58, 138, 0.15);
 }
 
-.premium-settings input {
-  width: 100%;
-  margin-top: 6px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  font-size: 1rem;
-}
-
-/* Grid */
-.premium-grid {
-  width: 100%;
-  max-width: 900px;
+.dialpad-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, 90px);
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.dialpad-key {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: none;
+  background: #dbeafe;
+  font-size: 1.8rem;
+  color: #1e3a8a;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+  transition: transform 0.1s ease;
+}
+
+.dialpad-key:active {
+  transform: scale(0.95);
+}
+
+.dialpad-actions {
+  display: flex;
+  justify-content: center;
   gap: 20px;
 }
 
-/* Tiles */
-.premium-tile {
-  background: #ffffffdd;
-  backdrop-filter: blur(8px);
-  border-radius: 20px;
-  padding: 24px 16px;
-  text-align: center;
+.delete-btn {
+  background: #f1f5f9;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 1.4rem;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(30, 58, 138, 0.15);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  color: #1e293b;
 }
 
-.premium-tile:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(30, 58, 138, 0.25);
-}
-
-.premium-tile.disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-/* Icon circle */
-.icon-circle {
-  width: 70px;
-  height: 70px;
-  background: #dbeafe;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  margin: 0 auto 10px;
-  box-shadow: inset 0 0 10px rgba(30, 58, 138, 0.15);
-}
-
-/* Tile text */
-.premium-tile h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e3a8a;
+.call-btn {
+  background: #22c55e;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 1.4rem;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }

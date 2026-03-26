@@ -1,52 +1,50 @@
 import { useState } from "react";
 
-export default function Dialpad({ voiceKey, onBack }) {
+export default function Dialpad({ voiceKey, onBack, lastCompanion }) {
   const [number, setNumber] = useState("");
 
-  const handlePress = (digit) => {
-    setNumber((prev) => (prev + digit).slice(0, 16));
+  const press = (digit) => {
+    setNumber((prev) => (prev + digit).slice(0, 15));
   };
 
-  const handleClear = () => setNumber("");
-  const handleCall = () => {
-    // Hook this into your real AI call flow later
-    alert("Connecting your AI companion call…");
+  const backspace = () => {
+    setNumber((prev) => prev.slice(0, -1));
   };
 
-  const buttons = [
-    "1","2","3",
-    "4","5","6",
-    "7","8","9",
-    "*","0","#",
-  ];
+  const call = () => {
+    if (!lastCompanion) {
+      alert("No companion selected yet.");
+      return;
+    }
+
+    // Redirect into your AI companion call flow
+    alert(`Calling ${lastCompanion}…`);
+    // Example:
+    // navigate(`/call/${lastCompanion}?voiceKey=${voiceKey}`);
+  };
+
+  const keys = ["1","2","3","4","5","6","7","8","9","*","0","#"];
 
   return (
-    <div className="feature-screen">
-      <header className="feature-header">
-        <button className="back-button" onClick={onBack}>← Back</button>
-        <h1>Phone Dialpad</h1>
-        <p>Make a “call” to your AI companion.</p>
-      </header>
+    <div className="dialpad-container">
+      <button className="back-btn" onClick={onBack}>← Back</button>
 
-      <div className="dialpad-display">
-        <span>{number || "Enter number"}</span>
-      </div>
+      <h1 className="dialpad-title">Phone Dialpad</h1>
+      <p className="dialpad-sub">Call your AI companion</p>
+
+      <div className="dialpad-display">{number || "Enter number"}</div>
 
       <div className="dialpad-grid">
-        {buttons.map((b) => (
-          <button
-            key={b}
-            className="dialpad-key"
-            onClick={() => handlePress(b)}
-          >
-            {b}
+        {keys.map((k) => (
+          <button key={k} className="dialpad-key" onClick={() => press(k)}>
+            {k}
           </button>
         ))}
       </div>
 
       <div className="dialpad-actions">
-        <button className="secondary" onClick={handleClear}>Clear</button>
-        <button className="primary" onClick={handleCall}>Call</button>
+        <button className="delete-btn" onClick={backspace}>⌫</button>
+        <button className="call-btn" onClick={call}>📞 Call</button>
       </div>
     </div>
   );
