@@ -1,13 +1,11 @@
 import { useState } from "react";
 import "./styles/App.css";
 
-// Core apps
 import MemoryMirror from "./pages/MemoryMirror";
 import CarerHireAI from "./pages/CarerHireAI";
 import FreshStartAI from "./pages/FreshStartAI";
 import LittleOnesAI from "./pages/LittleOnesAI";
 
-// Extra features
 import Dialpad from "./pages/Dialpad";
 import Banking from "./pages/Banking";
 import PhotoHub from "./pages/PhotoHub";
@@ -22,7 +20,6 @@ export default function App() {
     onBack: () => setView("home"),
   };
 
-  // Route to each feature
   if (view === "memory") return <MemoryMirror {...commonProps} />;
   if (view === "carer") return <CarerHireAI {...commonProps} />;
   if (view === "fresh") return <FreshStartAI {...commonProps} />;
@@ -32,16 +29,15 @@ export default function App() {
   if (view === "photos") return <PhotoHub {...commonProps} />;
   if (view === "music") return <MusicTherapy {...commonProps} />;
 
-  // Home dashboard
   return (
-    <div className="app-container">
-      <header className="header">
+    <div className="premium-container">
+      <header className="premium-header">
         <h1>Memory Mirror</h1>
         <p>Your AI tools for comfort, safety, and connection.</p>
       </header>
 
-      <div className="settings-box">
-        <label>ElevenLabs Voice Key:</label>
+      <div className="premium-settings">
+        <label>ElevenLabs Voice Key</label>
         <input
           type="password"
           value={voiceKey}
@@ -50,49 +46,49 @@ export default function App() {
         />
       </div>
 
-      <div className="grid-3x3">
-        <div className="tile" onClick={() => setView("memory")}>
-          <span className="emoji">🧠</span>
+      <div className="premium-grid">
+        <div className="premium-tile" onClick={() => setView("memory")}>
+          <div className="icon-circle">🧠</div>
           <h2>Memory Mirror</h2>
         </div>
 
-        <div className="tile" onClick={() => setView("carer")}>
-          <span className="emoji">🧑‍⚕️</span>
+        <div className="premium-tile" onClick={() => setView("carer")}>
+          <div className="icon-circle">🧑‍⚕️</div>
           <h2>CarerHire AI</h2>
         </div>
 
-        <div className="tile" onClick={() => setView("fresh")}>
-          <span className="emoji">🌅</span>
+        <div className="premium-tile" onClick={() => setView("fresh")}>
+          <div className="icon-circle">🌅</div>
           <h2>Fresh Start AI</h2>
         </div>
 
-        <div className="tile" onClick={() => setView("little")}>
-          <span className="emoji">👧</span>
+        <div className="premium-tile" onClick={() => setView("little")}>
+          <div className="icon-circle">👧</div>
           <h2>Little Ones AI</h2>
         </div>
 
-        <div className="tile" onClick={() => setView("dialpad")}>
-          <span className="emoji">📞</span>
+        <div className="premium-tile" onClick={() => setView("dialpad")}>
+          <div className="icon-circle">📞</div>
           <h2>Fake Dialpad</h2>
         </div>
 
-        <div className="tile" onClick={() => setView("banking")}>
-          <span className="emoji">💳</span>
+        <div className="premium-tile" onClick={() => setView("banking")}>
+          <div className="icon-circle">💳</div>
           <h2>Fake Banking</h2>
         </div>
 
-        <div className="tile" onClick={() => setView("photos")}>
-          <span className="emoji">🖼️</span>
+        <div className="premium-tile" onClick={() => setView("photos")}>
+          <div className="icon-circle">🖼️</div>
           <h2>Photo Hub</h2>
         </div>
 
-        <div className="tile" onClick={() => setView("music")}>
-          <span className="emoji">🎵</span>
+        <div className="premium-tile" onClick={() => setView("music")}>
+          <div className="icon-circle">🎵</div>
           <h2>Music Therapy</h2>
         </div>
 
-        <div className="tile tile-disabled">
-          <span className="emoji">➕</span>
+        <div className="premium-tile disabled">
+          <div className="icon-circle">➕</div>
           <h2>Coming Soon</h2>
         </div>
       </div>

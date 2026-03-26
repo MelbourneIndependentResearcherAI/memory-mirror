@@ -98,33 +98,113 @@ Easy-to-use form for capturing new memories
 ## 📁 Project Structure
 
 ```
-memory-mirror-app/
-├── src/
-│   ├── components/        # React components
-│   │   ├── Header.jsx
-│   │   ├── MemoryCard.jsx
-│   │   ├── MemoryGrid.jsx
-│   │   ├── MemoryModal.jsx
-│   │   ├── Timeline.jsx
-│   │   └── EmptyState.jsx
-│   ├── hooks/            # Custom React hooks
-│   │   └── useMemories.js
-│   ├── utils/            # Utility functions
-│   │   ├── storage.js    # Local storage management
-│   │   └── helpers.js    # Helper functions
-│   ├── styles/           # CSS modules
-│   │   ├── index.css
-│   │   ├── App.css
-│   │   └── [component].css
-│   ├── App.jsx           # Main app component
-│   └── main.jsx          # Entry point
-├── index.html            # HTML template
-├── vite.config.js        # Vite configuration
-├── package.json          # Dependencies and scripts
-└── README.md            # This file
-```
+/* Background gradient */
+.premium-container {
+  min-height: 100vh;
+  padding: 30px;
+  background: linear-gradient(135deg, #dbeafe, #eff6ff, #ffffff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+}
 
-## 🔧 Available Scripts
+/* Header */
+.premium-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.premium-header h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.premium-header p {
+  font-size: 1.1rem;
+  color: #475569;
+}
+
+/* Settings box */
+.premium-settings {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffffaa;
+  backdrop-filter: blur(10px);
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
+}
+
+.premium-settings label {
+  font-size: 0.9rem;
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.premium-settings input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+}
+
+/* Grid */
+.premium-grid {
+  width: 100%;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+/* Tiles */
+.premium-tile {
+  background: #ffffffdd;
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(30, 58, 138, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.premium-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(30, 58, 138, 0.25);
+}
+
+.premium-tile.disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Icon circle */
+.icon-circle {
+  width: 70px;
+  height: 70px;
+  background: #dbeafe;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  margin: 0 auto 10px;
+  box-shadow: inset 0 0 10px rgba(30, 58, 138, 0.15);
+}
+
+/* Tile text */
+.premium-tile h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
 
 ```bash
 # Development
