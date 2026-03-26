@@ -1,40 +1,44 @@
 import { useState } from "react";
 import "./styles/App.css";
 
-// Import the four apps
+// Core apps
 import MemoryMirror from "./pages/MemoryMirror";
 import CarerHireAI from "./pages/CarerHireAI";
 import FreshStartAI from "./pages/FreshStartAI";
+
+// Little Ones AI (separate app folder)
 import LittleOnesAI from "../pages/little-ones-ai/src/App.jsx";
+
+// Extra features (assumed paths)
+import Dialpad from "./pages/Dialpad.jsx";
+import Banking from "./pages/Banking.jsx";
+import PhotoHub from "./pages/PhotoHub.jsx";
+import MusicTherapy from "./pages/MusicTherapy.jsx";
 
 export default function App() {
   const [view, setView] = useState("home");
   const [voiceKey, setVoiceKey] = useState("");
 
-  // Render each app full-screen
-  if (view === "memory") {
-    return <MemoryMirror voiceKey={voiceKey} onBack={() => setView("home")} />;
-  }
+  const commonProps = {
+    voiceKey,
+    onBack: () => setView("home"),
+  };
 
-  if (view === "carer") {
-    return <CarerHireAI voiceKey={voiceKey} onBack={() => setView("home")} />;
-  }
+  if (view === "memory") return <MemoryMirror {...commonProps} />;
+  if (view === "carer") return <CarerHireAI {...commonProps} />;
+  if (view === "fresh") return <FreshStartAI {...commonProps} />;
+  if (view === "little") return <LittleOnesAI {...commonProps} />;
+  if (view === "dialpad") return <Dialpad {...commonProps} />;
+  if (view === "banking") return <Banking {...commonProps} />;
+  if (view === "photos") return <PhotoHub {...commonProps} />;
+  if (view === "music") return <MusicTherapy {...commonProps} />;
 
-  if (view === "fresh") {
-    return <FreshStartAI voiceKey={voiceKey} onBack={() => setView("home")} />;
-  }
-
-  if (view === "little") {
-    return <LittleOnesAI voiceKey={voiceKey} onBack={() => setView("home")} />;
-  }
-
-  // Home screen — 2×2 grid
+  // Home dashboard: 3×3 grid
   return (
     <div className="app-container">
-
       <header className="header">
         <h1>Memory Mirror</h1>
-        <p>Your AI companions for support, comfort, and connection.</p>
+        <p>Your AI tools for comfort, safety, and connection.</p>
       </header>
 
       <div className="settings-box">
@@ -47,8 +51,7 @@ export default function App() {
         />
       </div>
 
-      <div className="grid-2x2">
-
+      <div className="grid-3x3">
         <div className="tile" onClick={() => setView("memory")}>
           <span className="emoji">🧠</span>
           <h2>Memory Mirror</h2>
@@ -69,6 +72,30 @@ export default function App() {
           <h2>Little Ones AI</h2>
         </div>
 
+        <div className="tile" onClick={() => setView("dialpad")}>
+          <span className="emoji">📞</span>
+          <h2>Fake Dialpad</h2>
+        </div>
+
+        <div className="tile" onClick={() => setView("banking")}>
+          <span className="emoji">💳</span>
+          <h2>Fake Banking</h2>
+        </div>
+
+        <div className="tile" onClick={() => setView("photos")}>
+          <span className="emoji">🖼️</span>
+          <h2>Photo Hub</h2>
+        </div>
+
+        <div className="tile" onClick={() => setView("music")}>
+          <span className="emoji">🎵</span>
+          <h2>Music Therapy</h2>
+        </div>
+
+        <div className="tile tile-disabled">
+          <span className="emoji">➕</span>
+          <h2>Coming Soon</h2>
+        </div>
       </div>
     </div>
   );
