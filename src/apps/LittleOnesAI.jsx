@@ -426,9 +426,10 @@ function GrandchildCard({ gc, onSelect }) {
 }
 
 // ── Main App ──────────────────────────────────────────────────
-export default function LittleOnesAI({ onBack }) {
+export default function LittleOnesAI({ onBack, maxPersonas = 6 }) {
   const [screen, setScreen] = useState("home");
   const [selected, setSelected] = useState(null);
+  const visibleGrandchildren = GRANDCHILDREN.slice(0, maxPersonas);
 
   if (screen === "chat" && selected) return <ChatInterface gc={selected} onBack={() => setScreen("browse")} />;
 
@@ -539,7 +540,7 @@ export default function LittleOnesAI({ onBack }) {
             <p style={{ color: "#888", fontSize: 14 }}>Choose who Nanny or Poppy connects with most. All support 🎙️ hands-free voice conversation.</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 22 }}>
-            {GRANDCHILDREN.map((gc, i) => (
+            {visibleGrandchildren.map((gc, i) => (
               <div key={gc.id} style={{ animation: `fadeUp 0.4s ease ${i * 0.07}s both` }}>
                 <GrandchildCard gc={gc} onSelect={(g) => { setSelected(g); setScreen("chat"); }} />
               </div>

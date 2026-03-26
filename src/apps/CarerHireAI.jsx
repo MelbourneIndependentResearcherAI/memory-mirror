@@ -430,9 +430,10 @@ function CarerCard({ carer, onSelect, selected }) {
   );
 }
 
-export default function CarerHireAI({ onBack }) {
+export default function CarerHireAI({ onBack, maxPersonas = 6 }) {
   const [screen, setScreen] = useState("home");
   const [selected, setSelected] = useState(null);
+  const visibleCarers = CARERS.slice(0, maxPersonas);
 
   if (screen === "chat" && selected) return <ChatInterface carer={selected} onBack={() => setScreen("browse")} />;
 
@@ -527,7 +528,7 @@ export default function CarerHireAI({ onBack }) {
             <p style={{ color: "#888", fontSize: 14 }}>Choose who your loved one connects with. All support hands-free voice. 🎙️</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 22 }}>
-            {CARERS.map((c, i) => (
+            {visibleCarers.map((c, i) => (
               <div key={c.id} style={{ animation: `fadeUp 0.4s ease ${i * 0.07}s both` }}>
                 <CarerCard carer={c} selected={selected?.id === c.id} onSelect={(carer) => { setSelected(carer); setScreen("chat"); }} />
               </div>
