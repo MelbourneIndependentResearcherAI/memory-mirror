@@ -430,7 +430,7 @@ function CarerCard({ carer, onSelect, selected }) {
   );
 }
 
-export default function CarerHireAI() {
+export default function CarerHireAI({ onBack }) {
   const [screen, setScreen] = useState("home");
   const [selected, setSelected] = useState(null);
 
@@ -448,6 +448,9 @@ export default function CarerHireAI() {
       `}</style>
 
       <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "#0d0d1acc", backdropFilter: "blur(20px)", borderBottom: "1px solid #2C5F2E33", padding: "0 24px", display: "flex", alignItems: "center", gap: 14, height: 64 }}>
+        {onBack && (
+          <button onClick={onBack} style={{ background: "none", border: "1px solid #2C5F2E55", borderRadius: 8, padding: "5px 12px", color: "#81C784", cursor: "pointer", fontSize: 12, fontFamily: "inherit", flexShrink: 0 }}>← Home</button>
+        )}
         <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 22 }}>🌿</span>
           <span style={{ color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 900 }}>Carer Hire AI</span>

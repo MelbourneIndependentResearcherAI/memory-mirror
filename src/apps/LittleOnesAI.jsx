@@ -154,13 +154,13 @@ function ChatInterface({ gc, onBack }) {
   const recRef = useRef(null);
   const voiceRef = useRef(false);
   // KEY FIX: always-current messages ref so voice callbacks never use stale history
-  const messagesRef = useRef([{ role: "assistant", text: grandchild.greeting }]);
+  const messagesRef = useRef([{ role: "assistant", text: gc.greeting }]);
   const loadingRef = useRef(false);
 
   useEffect(() => { voiceRef.current = voiceMode; }, [voiceMode]);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  const startListening = useCallback(() => {
+  const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { alert("Voice input needs Chrome or Safari."); return; }
     try { recRef.current?.abort(); } catch {}
@@ -426,7 +426,7 @@ function GrandchildCard({ gc, onSelect }) {
 }
 
 // ── Main App ──────────────────────────────────────────────────
-export default function LittleOnesAI() {
+export default function LittleOnesAI({ onBack }) {
   const [screen, setScreen] = useState("home");
   const [selected, setSelected] = useState(null);
 
@@ -446,6 +446,9 @@ export default function LittleOnesAI() {
 
       {/* Nav */}
       <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "#0d0d1acc", backdropFilter: "blur(20px)", borderBottom: "1px solid #9C27B033", padding: "0 24px", display: "flex", alignItems: "center", gap: 14, height: 64 }}>
+        {onBack && (
+          <button onClick={onBack} style={{ background: "none", border: "1px solid #9C27B055", borderRadius: 8, padding: "5px 12px", color: "#CE93D8", cursor: "pointer", fontSize: 12, fontFamily: "inherit", flexShrink: 0 }}>← Home</button>
+        )}
         <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 22, display: "inline-block", animation: "sparkle 3s ease infinite" }}>💜</span>
           <span style={{ fontFamily: "'Fredoka One', Georgia, sans-serif", fontSize: 22, color: "#fff", letterSpacing: 1 }}>Little Ones AI</span>

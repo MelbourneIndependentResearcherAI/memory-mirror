@@ -1,91 +1,672 @@
-/* DIALPAD — Memory Lane Blue Premium */
+/* =========================================
+   MEMORY MIRROR — PREMIUM STYLESHEET
+   App.css — Home Screen + Sub-page Styles
+   ========================================= */
 
-.dialpad-container {
-  padding: 20px;
-  max-width: 420px;
+/* --- HOME SCREEN --- */
+.home-screen {
+  min-height: 100vh;
+  background: #07100a;
+  color: #f0fdf4;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-header {
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid #1a2e1c;
+  background: rgba(7, 16, 10, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.home-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.home-brand-icon {
+  font-size: 30px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.home-brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f0fdf4;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.home-brand-tagline {
+  font-size: 11px;
+  color: #4ade80;
+  margin-top: 2px;
+  letter-spacing: 0.2px;
+}
+
+.home-clock {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.home-clock-time {
+  font-size: 26px;
+  font-weight: 600;
+  color: #f0fdf4;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-clock-date {
+  font-size: 11px;
+  color: #3a5540;
+  margin-top: 4px;
+}
+
+.home-settings-btn {
+  background: none;
+  border: 1px solid #1a2e1c;
+  border-radius: 10px;
+  padding: 7px 9px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #3a5540;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.home-settings-btn:hover {
+  border-color: #4ade80;
+  background: #0f1c11;
+  color: #f0fdf4;
+}
+
+/* Settings panel */
+.home-settings-panel {
+  background: #0c1a0e;
+  border-bottom: 1px solid #1a2e1c;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.home-settings-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #86efac;
+  white-space: nowrap;
+}
+
+.home-settings-input {
+  flex: 1;
+  min-width: 240px;
+  background: #111e13;
+  border: 1px solid #1e3520;
+  border-radius: 10px;
+  padding: 9px 14px;
+  color: #f0fdf4;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.home-settings-input:focus {
+  border-color: #4ade80;
+  outline: none;
+}
+
+.home-settings-hint {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: #3a5540;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Grid container */
+.home-grid-container {
+  flex: 1;
+  padding: 28px 24px;
+  max-width: 920px;
   margin: 0 auto;
+  width: 100%;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* Tile */
+.home-tile {
+  background: #0f1c11;
+  border: 1px solid #1a2e1c;
+  border-radius: 20px;
+  padding: 26px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  text-align: center;
+  min-height: 148px;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  color: inherit;
+}
+
+.home-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(74, 222, 128, 0.07) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+
+.home-tile:hover {
+  border-color: #2e5c34;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(74, 222, 128, 0.09);
+}
+
+.home-tile:hover::after { opacity: 1; }
+
+.home-tile:active {
+  transform: translateY(-1px) scale(0.97);
+  transition-duration: 0.07s;
+}
+
+.home-tile-icon {
+  font-size: 36px;
+  line-height: 1;
+  display: block;
+}
+
+.home-tile-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f0fdf4;
+  display: block;
+  line-height: 1.3;
+}
+
+.home-tile-desc {
+  font-size: 11px;
+  color: #3a5540;
+  display: block;
+  line-height: 1.4;
+}
+
+/* Footer */
+.home-footer {
+  padding: 18px 28px;
+  border-top: 1px solid #1a2e1c;
   text-align: center;
 }
 
+.home-footer p {
+  font-size: 11px;
+  color: #1e3520;
+}
+
+/* =========================================
+   SHARED — BACK BUTTON
+   ========================================= */
 .back-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  color: #1e3a8a;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #f0fdf4;
   cursor: pointer;
-  margin-bottom: 10px;
+  transition: all 0.2s;
+  margin-bottom: 24px;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateX(-2px);
+}
+
+/* =========================================
+   DIALPAD PAGE
+   ========================================= */
+.dialpad-container {
+  min-height: 100vh;
+  background: #07100a;
+  padding: 28px 24px 48px;
+  max-width: 420px;
+  margin: 0 auto;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #f0fdf4;
+  text-align: center;
 }
 
 .dialpad-title {
-  font-size: 2rem;
+  font-size: 26px;
   font-weight: 700;
-  color: #1e3a8a;
+  color: #f0fdf4;
+  margin-bottom: 6px;
 }
 
 .dialpad-sub {
-  color: #475569;
-  margin-bottom: 20px;
+  font-size: 14px;
+  color: #3a5540;
+  margin-bottom: 28px;
 }
 
 .dialpad-display {
-  background: #ffffffdd;
-  backdrop-filter: blur(6px);
-  padding: 16px;
-  border-radius: 14px;
-  font-size: 1.6rem;
-  color: #1e3a8a;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 14px rgba(30, 58, 138, 0.15);
+  background: #0f1c11;
+  border: 1px solid #1a2e1c;
+  border-radius: 16px;
+  padding: 16px 24px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #4ade80;
+  margin-bottom: 22px;
+  letter-spacing: 3px;
+  min-height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .dialpad-grid {
   display: grid;
-  grid-template-columns: repeat(3, 90px);
+  grid-template-columns: repeat(3, 88px);
   gap: 12px;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .dialpad-key {
-  width: 90px;
-  height: 90px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  border: none;
-  background: #dbeafe;
-  font-size: 1.8rem;
-  color: #1e3a8a;
+  border: 1px solid #1a2e1c;
+  background: #0f1c11;
+  font-size: 24px;
+  font-weight: 600;
+  color: #f0fdf4;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
-  transition: transform 0.1s ease;
+  transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+}
+
+.dialpad-key:hover {
+  background: #162218;
+  border-color: #2e5c34;
 }
 
 .dialpad-key:active {
-  transform: scale(0.95);
+  transform: scale(0.91);
+  background: #1a2e1c;
+  transition-duration: 0.06s;
 }
 
 .dialpad-actions {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 14px;
+  margin-top: 6px;
 }
 
 .delete-btn {
-  background: #f1f5f9;
-  border: none;
-  padding: 14px 22px;
-  border-radius: 12px;
-  font-size: 1.4rem;
+  background: #0f1c11;
+  border: 1px solid #1a2e1c;
+  border-radius: 14px;
+  padding: 14px 26px;
+  font-size: 20px;
   cursor: pointer;
-  color: #1e293b;
+  color: #f0fdf4;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.delete-btn:hover {
+  background: #162218;
+  border-color: #2e5c34;
 }
 
 .call-btn {
-  background: #22c55e;
+  background: #16a34a;
   border: none;
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-size: 1.4rem;
+  border-radius: 14px;
+  padding: 14px 30px;
+  font-size: 20px;
   color: white;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  transition: all 0.18s;
+  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.28);
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.call-btn:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(22, 163, 74, 0.4);
+}
+
+.call-btn:active {
+  transform: translateY(0);
+  transition-duration: 0.06s;
+}
+
+/* =========================================
+   BANKING PAGE
+   ========================================= */
+.bank-container {
+  min-height: 100vh;
+  background: #07100a;
+  padding: 28px 24px 60px;
+  max-width: 580px;
+  margin: 0 auto;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #f0fdf4;
+}
+
+.bank-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.bank-sub {
+  font-size: 14px;
+  color: #3a5540;
+  margin-bottom: 28px;
+}
+
+.bank-card {
+  background: linear-gradient(145deg, #0d2416, #091510);
+  border: 1px solid #1e3d26;
+  border-radius: 22px;
+  padding: 32px 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(74, 222, 128, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.bank-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bank-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4ade80;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.bank-balance {
+  font-size: 48px;
+  font-weight: 700;
+  color: #f0fdf4;
+  letter-spacing: -1.5px;
+  margin-bottom: 18px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.bank-note {
+  font-size: 12px;
+  color: #2e5c34;
+  background: rgba(74, 222, 128, 0.04);
+  border: 1px solid rgba(74, 222, 128, 0.07);
+  border-radius: 10px;
+  padding: 10px 14px;
+  line-height: 1.6;
+}
+
+.bank-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #86efac;
+  margin-bottom: 12px;
+  letter-spacing: 0.1px;
+}
+
+.bank-list {
+  display: flex;
+  flex-direction: column;
+  background: #0f1c11;
+  border: 1px solid #1a2e1c;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.bank-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #1a2e1c;
+  font-size: 15px;
+  transition: background 0.15s;
+  gap: 12px;
+}
+
+.bank-row:last-child { border-bottom: none; }
+.bank-row:hover { background: #111e13; }
+
+.bank-amount {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   PHOTO HUB PAGE
+   ========================================= */
+.photo-container {
+  min-height: 100vh;
+  background: #07100a;
+  padding: 28px 24px 60px;
+  max-width: 680px;
+  margin: 0 auto;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #f0fdf4;
+}
+
+.photo-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.photo-sub {
+  font-size: 14px;
+  color: #3a5540;
+  margin-bottom: 28px;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.photo-card {
+  background: #0f1c11;
+  border: 1px solid #1a2e1c;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.photo-card:hover {
+  border-color: #2e5c34;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(74, 222, 128, 0.08);
+}
+
+.photo-thumbnail {
+  height: 164px;
+  background: linear-gradient(135deg, #111e13 0%, #0c1810 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  opacity: 0.3;
+}
+
+.photo-text {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.photo-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f0fdf4;
+}
+
+.photo-text span {
+  font-size: 12px;
+  color: #3a5540;
+}
+
+/* =========================================
+   MUSIC THERAPY PAGE
+   ========================================= */
+.music-container {
+  min-height: 100vh;
+  background: #07100a;
+  padding: 28px 24px 60px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #f0fdf4;
+}
+
+.music-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.music-sub {
+  font-size: 14px;
+  color: #3a5540;
+  margin-bottom: 28px;
+}
+
+.music-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.music-row {
+  background: #0f1c11;
+  border: 1px solid #1a2e1c;
+  border-left: 4px solid #1a2e1c;
+  border-radius: 16px;
+  padding: 20px 20px 20px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, border-left-color 0.2s, transform 0.2s, box-shadow 0.2s, background 0.2s;
+  text-align: left;
+  color: #f0fdf4;
+  font-family: 'Inter', -apple-system, sans-serif;
+  width: 100%;
+}
+
+.music-row:hover {
+  border-left-color: #4ade80;
+  border-color: #2e5c34;
+  background: #0c1810;
+  transform: translateX(4px);
+  box-shadow: 0 4px 18px rgba(74, 222, 128, 0.07);
+}
+
+.music-row:active {
+  transform: translateX(2px) scale(0.99);
+  transition-duration: 0.06s;
+}
+
+.music-row strong {
+  font-size: 16px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.music-meta {
+  font-size: 13px;
+  color: #3a5540;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 800px) {
+  .home-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .home-header { padding: 14px 18px; gap: 10px; }
+  .home-brand-name { font-size: 17px; }
+  .home-brand-tagline { display: none; }
+  .home-clock-time { font-size: 20px; }
+  .home-clock-date { display: none; }
+  .home-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .home-tile { padding: 22px 12px 16px; min-height: 128px; border-radius: 16px; }
+  .home-tile-icon { font-size: 30px; }
+  .home-grid-container { padding: 18px 14px; }
+  .photo-grid { grid-template-columns: 1fr; }
 }
