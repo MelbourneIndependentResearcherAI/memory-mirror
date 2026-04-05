@@ -1,0 +1,98 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Georgia, serif;
+  background: #060d1a;
+  color: #fff;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ===== Fresh Start AI — Responsive Layout ===== */
+
+@media (max-width: 640px) {
+  /* Navigation: wrap to two rows on small screens */
+  .fresh-nav {
+    height: auto !important;
+    min-height: 52px !important;
+    padding: 10px 16px !important;
+    flex-wrap: wrap !important;
+    gap: 6px 12px !important;
+  }
+  .fresh-nav-badge {
+    display: none !important;
+  }
+  .fresh-nav-links {
+    margin-left: 0 !important;
+    flex-basis: 100%;
+  }
+  .fresh-nav-btn {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+  }
+
+  /* Hero section */
+  .fresh-hero-section {
+    min-height: auto !important;
+    padding: 36px 16px 28px !important;
+  }
+  .fresh-hero-badge {
+    max-width: 100% !important;
+    white-space: normal !important;
+    text-align: center !important;
+    padding: 8px 14px !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* Session: voice button label hidden to prevent header overflow */
+  .fresh-voice-btn-text {
+    display: none !important;
+  }
+
+  /* Session Done screen */
+  .fresh-done-screen {
+    padding: 28px 20px !important;
+  }
+  .fresh-done-emoji {
+    font-size: 64px !important;
+  }
+  .fresh-done-title {
+    font-size: 34px !important;
+    margin: 14px 0 10px !important;
+  }
+  .fresh-done-desc {
+    font-size: 16px !important;
+    margin-bottom: 28px !important;
+  }
+
+  /* Quote section */
+  .fresh-quote-section {
+    padding: 28px 20px !important;
+    margin: 0 auto 60px !important;
+  }
+
+  /* Companions screen */
+  .fresh-companions-screen {
+    padding: 28px 16px !important;
+  }
+
+  /* Pricing screen */
+  .fresh-pricing-screen {
+    padding: 40px 16px !important;
+  }
+  .fresh-pricing-highlighted {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .fresh-done-title {
+    font-size: 28px !important;
+  }
+  .fresh-companions-screen h1 {
+    font-size: 34px !important;
+  }
+  .fresh-pricing-screen h1 {
+    font-size: 36px !important;
+  }
+}

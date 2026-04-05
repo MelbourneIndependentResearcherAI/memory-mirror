@@ -1,0 +1,70 @@
+/* ─── Memory Mirror — Premium Global Styles v3 ───────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font:     'Inter', 'Segoe UI', system-ui, sans-serif;
+  --sand:     #F5ECD7;
+  --clay:     #C4715A;
+  --green:    #7A9E7E;
+  --rose:     #D4A5A5;
+  --charcoal: #2C2420;
+  --sky:      #B8D4E3;
+  --smoke:    #E8E4DF;
+  --dark:     #1A1410;
+  --text:     #2C2420;
+  --muted:    #9E8E84;
+  --shadow-md: 0 4px 20px rgba(0,0,0,.14);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,.20);
+  --radius:   18px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--sand);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button { font-family: var(--font); cursor: pointer; border: none; outline: none; }
+button:focus-visible { outline: 3px solid var(--clay); outline-offset: 2px; }
+input, textarea { font-family: var(--font); }
+img { display: block; }
+
+/* ─ Scrollbar ─ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(61,53,48,.15); border-radius: 4px; }
+
+/* ─ Global animations ─ */
+@keyframes breathe    { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+@keyframes pulse      { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.3} }
+@keyframes fadeUp     { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes bgFadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes shimmer    { 0%,100%{opacity:.6} 50%{opacity:1} }
+@keyframes spin       { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes flicker1   { 0%,100%{transform:translateX(-54%) scaleY(1) scaleX(1)} 30%{transform:translateX(-57%) scaleY(1.10) scaleX(.92)} 70%{transform:translateX(-51%) scaleY(.94) scaleX(1.07)} }
+@keyframes flicker2   { 0%,100%{transform:translateX(-38%) scaleY(1)} 40%{transform:translateX(-42%) scaleY(1.15)} 80%{transform:translateX(-34%) scaleY(.91)} }
+
+/* ─ Dashboard tile hover ─ */
+.photo-tile:hover { transform: translateY(-3px) scale(1.016) !important; box-shadow: 0 14px 44px rgba(0,0,0,.25) !important; }
+.photo-tile:hover .tile-img { filter: brightness(0.98) saturate(0.9) !important; transform: scale(1.05); }
+.photo-tile:focus-visible { outline: 3px solid #D4A574; outline-offset: 3px; }
+.tile-img { transition: transform 0.35s ease, filter 0.35s ease !important; }
+
+/* ─ Responsive dashboard grid ─ */
+@media (max-width: 1100px) { .dash-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+@media (max-width: 780px)  { .dash-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+@media (max-width: 480px)  { .dash-grid { grid-template-columns: 1fr !important; } }
+
+/* ─ Photo tile dark page body ─ */
+.dark-page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1A1410 0%, #0E0C08 100%);
+}
+
+/* ─ Chat bubble entry ─ */
+.bubble-enter { animation: fadeUp .22s ease; }
