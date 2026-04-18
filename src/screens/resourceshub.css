@@ -1,0 +1,29 @@
+﻿.res-wrapper {
+  padding: 28px;
+  color: #e8f4ff;
+}
+
+.res-title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.res-sub {
+  font-size: 16px;
+  color: #9bb7d1;
+  margin-bottom: 20px;
+}
+
+.res-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.res-item {
+  background: rgba(20, 20, 30, 0.55);
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 0 20px rgba(0,150,255,0.12);
+}

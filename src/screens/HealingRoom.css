@@ -1,0 +1,36 @@
+.heal-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #e8f4ff;
+  background: radial-gradient(circle at top, #0a0a0f, #000);
+}
+
+.heal-title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.heal-sub {
+  font-size: 16px;
+  color: #9bb7d1;
+  margin-bottom: 20px;
+}
+
+.heal-icon {
+  font-size: 70px;
+  animation: healPulse 3s ease-in-out infinite;
+}
+
+@keyframes healPulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.heal-note {
+  margin-top: 20px;
+  color: #9bb7d1;
+}

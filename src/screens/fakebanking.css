@@ -1,0 +1,58 @@
+﻿.bank-wrapper {
+  padding: 28px;
+  color: #e8f4ff;
+  text-align: center;
+}
+
+.bank-title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.bank-sub {
+  font-size: 16px;
+  color: #9bb7d1;
+  margin-bottom: 20px;
+}
+
+.bank-card {
+  background: rgba(20, 20, 30, 0.55);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 26px rgba(0, 150, 255, 0.12);
+}
+
+.bank-balance {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.bank-label {
+  font-size: 14px;
+  color: #9bb7d1;
+}
+
+.bank-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bank-btn {
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #00aaff, #0066ff);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(0, 150, 255, 0.4);
+}
+
+.bank-note {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #9bb7d1;
+}

@@ -1,0 +1,136 @@
+﻿.pv-container {
+  padding: 20px;
+  color: #fff;
+  background: rgba(10, 10, 15, 0.65);
+  backdrop-filter: blur(18px);
+  min-height: 100vh;
+}
+
+.pv-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #9be8ff;
+}
+
+.pv-upload-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.pv-upload-btn {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid rgba(150, 255, 255, 0.25);
+  color: #c8f7ff;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.pv-upload-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.pv-upload-btn input {
+  display: none;
+}
+
+.pv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 15px;
+}
+
+.pv-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(150, 255, 255, 0.15);
+  transition: 0.2s;
+}
+
+.pv-card:hover {
+  transform: scale(1.03);
+  border-color: rgba(150, 255, 255, 0.4);
+}
+
+.pv-thumb {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.pv-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 5, 10, 0.85);
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pv-viewer-content {
+  width: 90%;
+  max-width: 600px;
+  background: rgba(20, 20, 30, 0.6);
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(150, 255, 255, 0.25);
+}
+
+.pv-full {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.pv-description {
+  width: 100%;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(150, 255, 255, 0.25);
+  border-radius: 10px;
+  padding: 10px;
+  color: #eaffff;
+  margin-bottom: 15px;
+}
+
+.pv-viewer-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pv-save,
+.pv-delete,
+.pv-close {
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.pv-save {
+  background: #00c6ff;
+  color: #000;
+}
+
+.pv-delete {
+  background: #ff4d4d;
+  color: #fff;
+}
+
+.pv-close {
+  background: #444;
+  color: #fff;
+}

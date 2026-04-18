@@ -1,0 +1,28 @@
+﻿.notes-wrapper {
+  padding: 28px;
+  color: #e8f4ff;
+}
+
+.notes-title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.notes-sub {
+  font-size: 16px;
+  color: #9bb7d1;
+  margin-bottom: 20px;
+}
+
+.notes-input {
+  width: 100%;
+  min-height: 300px;
+  background: rgba(20, 20, 30, 0.55);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  color: #e8f4ff;
+  font-size: 15px;
+  resize: vertical;
+  outline: none;
+}

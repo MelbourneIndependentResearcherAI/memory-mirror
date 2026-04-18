@@ -1,0 +1,117 @@
+/* ============================
+   MEMORY MIRROR OS — GLOBAL THEME
+   Unified neon-dark, dementia-safe design
+   ============================ */
+
+/* COLORS */
+:root {
+  --mm-bg: #000;
+  --mm-bg-soft: #050816;
+  --mm-bg-glass: rgba(5, 10, 25, 0.55);
+
+  --mm-text: #e8f4ff;
+  --mm-text-soft: rgba(232, 244, 255, 0.75);
+
+  --mm-blue: #4da3ff;
+  --mm-blue-strong: #0066ff;
+  --mm-blue-glow: rgba(0, 102, 255, 0.7);
+
+  --mm-border: rgba(77, 163, 255, 0.6);
+  --mm-border-soft: rgba(77, 163, 255, 0.35);
+
+  --mm-shadow-strong: 0 0 28px rgba(0, 102, 255, 0.7);
+  --mm-shadow-soft: 0 0 18px rgba(0, 102, 255, 0.45);
+}
+
+/* TYPOGRAPHY */
+body {
+  font-family: system-ui, sans-serif;
+  color: var(--mm-text);
+  background: var(--mm-bg);
+  margin: 0;
+}
+
+/* HEADERS */
+.mm-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--mm-blue), #8ecbff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.mm-subtitle {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  max-width: 520px;
+}
+
+/* GLASS PANELS */
+.mm-glass {
+  background: var(--mm-bg-glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--mm-border-soft);
+  border-radius: 22px;
+  box-shadow: var(--mm-shadow-soft);
+}
+
+/* BUTTONS */
+.mm-button {
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: none;
+  background: radial-gradient(circle at 0% 0%, var(--mm-blue) 0%, var(--mm-blue-strong) 40%, #001133 100%);
+  color: var(--mm-text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--mm-shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mm-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--mm-shadow-strong);
+}
+
+/* CARD BASE */
+.mm-card-base {
+  border-radius: 22px;
+  padding: 24px;
+  background: radial-gradient(circle at top left, #102544 0%, #020712 55%, #000 100%);
+  border: 1px solid var(--mm-border);
+  box-shadow: var(--mm-shadow-soft);
+}
+
+/* ICONS */
+.mm-icon {
+  width: 26px;
+  height: 26px;
+  opacity: 0.85;
+}
+
+/* SPACING */
+.mm-pad {
+  padding: 16px;
+}
+
+.mm-gap {
+  display: flex;
+  gap: 16px;
+}
+
+/* SAFE TAP TARGETS */
+.mm-tap {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* ANIMATIONS */
+@keyframes mmFadeIn {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.mm-fade {
+  animation: mmFadeIn 0.45s ease;
+}

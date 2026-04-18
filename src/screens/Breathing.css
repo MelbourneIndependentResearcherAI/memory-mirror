@@ -1,0 +1,40 @@
+.breath-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #e8f4ff;
+  background: radial-gradient(circle at top, #0a0a0f, #000);
+}
+
+.breath-title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.breath-sub {
+  font-size: 16px;
+  color: #9bb7d1;
+  margin-bottom: 20px;
+}
+
+.breath-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00aaff, #0066ff);
+  filter: blur(10px);
+  animation: breathePulse 6s ease-in-out infinite;
+}
+
+@keyframes breathePulse {
+  0% { transform: scale(0.7); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.7); opacity: 0.5; }
+}
+
+.breath-note {
+  margin-top: 20px;
+  color: #9bb7d1;
+}

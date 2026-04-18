@@ -1,0 +1,65 @@
+.yarn-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.yarn-input {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  resize: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  outline: none;
+}
+
+.yarn-add-btn {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(0, 255, 255, 0.2);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.yarn-add-btn:hover {
+  background: rgba(0, 255, 255, 0.35);
+}
+
+.yarn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.yarn-item {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 14px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.yarn-text {
+  font-size: 16px;
+  color: white;
+  white-space: pre-wrap;
+}
+
+.yarn-delete {
+  background: transparent;
+  border: none;
+  color: #ff6b6b;
+  font-size: 20px;
+  cursor: pointer;
+}

@@ -1,0 +1,46 @@
+.nav-wrapper {
+  position: fixed;
+  bottom: 18px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 50;
+}
+
+.nav-glass {
+  width: 92%;
+  max-width: 480px;
+  padding: 14px 22px;
+  background: rgba(20, 20, 30, 0.55);
+  backdrop-filter: blur(18px);
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 35px rgba(0, 150, 255, 0.12);
+  animation: fadeIn 0.8s ease-out;
+}
+
+.nav-item {
+  font-size: 22px;
+  color: #b8c7d9;
+  text-decoration: none;
+  transition: 0.25s ease;
+}
+
+.nav-item:hover {
+  color: #e8f4ff;
+  text-shadow: 0 0 12px rgba(0, 150, 255, 0.6);
+  transform: translateY(-3px);
+}
+
+.nav-item.active {
+  color: #00aaff;
+  text-shadow: 0 0 14px rgba(0, 150, 255, 0.9);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

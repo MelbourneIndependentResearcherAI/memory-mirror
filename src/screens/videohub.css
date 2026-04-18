@@ -1,0 +1,37 @@
+﻿.video-wrapper {
+  padding: 28px;
+  color: #e8f4ff;
+  text-align: center;
+}
+
+.video-title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.video-sub {
+  font-size: 16px;
+  color: #9bb7d1;
+  margin-bottom: 20px;
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.video-placeholder {
+  background: rgba(20, 20, 30, 0.55);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 40px 0;
+  font-size: 32px;
+  box-shadow: 0 0 20px rgba(0, 150, 255, 0.12);
+}
+
+.video-note {
+  font-size: 14px;
+  color: #9bb7d1;
+}
